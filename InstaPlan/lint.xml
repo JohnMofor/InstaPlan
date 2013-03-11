@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="ExportedActivity">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
+    <issue id="NestedWeights">
+        <ignore path="res\layout\layout_all_events.xml" />
+        <ignore path="res\layout\layout_chatroom.xml" />
+    </issue>
+    <issue id="OldTargetApi">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
+</lint>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="95"
+        android:padding="10sp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/createEvent_pageTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_pageTitle"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/createEvent_eventTitle_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_eventTitle" />
+
+            <EditText
+                android:id="@+id/createEvent_eventTitle_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/createEvent_titleHint" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/createEvent_eventTime_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_eventTime" />
+
+            <EditText
+                android:id="@+id/createEvent_eventTime_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/createEvent_timeHint"
+                android:inputType="time" />
+
+            <TextView
+                android:id="@+id/createEvent_eventDate_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_eventDate" />
+
+            <EditText
+                android:id="@+id/createEvent_eventDate_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/createEvent_dateHint"
+                android:inputType="date" />
+
+            <TextView
+                android:id="@+id/createEvent_eventLocation_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_eventLocation" />
+
+            <EditText
+                android:id="@+id/createEvent_eventLocation_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/createEvent_locationHint"
+                android:inputType="textPostalAddress" />
+
+            <TextView
+                android:id="@+id/createEvent_eventDescription_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_eventDescription" />
+
+            <EditText
+                android:id="@+id/createEvent_eventDescription_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/createEvent_descriptionHint"
+                android:inputType="textMultiLine" />
+
+            <CheckBox
+                android:id="@+id/createEvent_facebookStatus_checkBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_facebookStatus" />
+
+            <Button
+                android:id="@+id/createEvent_invite_local_contact_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_invite_local_contact_button" />
+
+            <Button
+                android:id="@+id/createEvent_invite_facebook_friend_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_invite_facebook_friend_button" />
+
+            <Button
+                android:id="@+id/createEvent_invite_non_local_contact_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_invite_non_local_contact_button" />
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:layout_weight="5"
+        android:id="@+id/createEvent_done_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/createEvent_done_button" />
+
+</LinearLayout>
