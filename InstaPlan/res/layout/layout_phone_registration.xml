@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/phoneRegistration_title_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/phoneRegistration_title_textView"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="25sp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/phoneRegistration_gcmInfo_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/phoneRegistration_gcmInfo_textView" />
+
+            <TextView
+                android:id="@+id/phoneRegistration_phoneNumber_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/phoneRegistration_phoneNumber_textView" />
+
+            <EditText
+                android:id="@+id/phoneRegistration_phoneNumber_editText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="phone"
+                android:maxLength="10" />
+
+            <TextView
+                android:id="@+id/phoneRegistration_userName_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/phoneRegistration_userName_textView" />
+
+            <EditText
+                android:id="@+id/phoneRegistration_userName_editText"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:ems="10"
+                android:hint="@string/phoneRegistration_userName_hint"
+                android:inputType="textPersonName" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/phoneRegistration_userEmail_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/phoneRegistration_userEmail_textView" />
+
+            <EditText
+                android:id="@+id/phoneRegistration_userEmail_editText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/phoneRegistration_userEmail_hint"
+                android:inputType="textEmailAddress" >
+            </EditText>
+
+            <Button
+                android:id="@+id/phoneRegistration_register_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/phoneRegistration_register_button" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

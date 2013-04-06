@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/downloader_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/downloader_editText_hint" >
+    </EditText>
+
+    <Button
+        android:id="@+id/downloader_fast_download_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/downloader_fast_download_button" >
+    </Button>
+
+    <Button
+        android:id="@+id/downloader_slow_download_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/downloader_slow_download_button" />
+
+</LinearLayout>
