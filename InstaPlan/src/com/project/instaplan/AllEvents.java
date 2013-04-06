@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -13,7 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class AllEvents extends Activity implements View.OnClickListener,
-		OnItemClickListener {
+		OnItemClickListener, OnItemLongClickListener {
 
 	// Instantiate ALl Public Variables Here.
 	String logTag = "MJ------>";
@@ -44,6 +45,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 		allEvents_createNew_button.setOnClickListener(this);
 		allEvents_deleteMultiple_button.setOnClickListener(this);
 		allEvents_listView.setOnItemClickListener(this);
+		allEvents_listView.setOnItemLongClickListener(this);
 	}
 
 	private void settingUpAdapter() {
@@ -73,7 +75,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 		Log.i(logTag, "List item Clicked" + position);
 		ClassEvent clicked_event = ClassUniverse.universeListOfAllEvents
 				.get(position);
-		Intent sendToChatRoom = new Intent("com.project.instaplan.Chatroom");
+		Intent sendToChatRoom = new Intent("com.project.instaplan2.Chatroom");
 		Log.i(logTag, "Putting Title Extra: " + clicked_event.title);
 		sendToChatRoom.putExtra("Title", clicked_event.title);
 		startActivity(sendToChatRoom);
@@ -86,7 +88,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 			// Enter code for this button.
 			Log.i(logTag, "Create New Button was pressed");
 			Intent sendToCreateEvent = new Intent(
-					"com.project.instaplan.CreateEvent");
+					"com.project.instaplan2.CreateEvent");
 			startActivity(sendToCreateEvent);
 			break;
 
@@ -114,5 +116,27 @@ public class AllEvents extends Activity implements View.OnClickListener,
 	protected void onPause() {
 		// TODO
 		super.onPause();
+		finish();
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position,
+			long arg3) {
+		Log.i(logTag, "List item Clicked" + position);
+		ClassEvent clicked_event = ClassUniverse.universeListOfAllEvents
+				.get(position);
+		clicked_event.delete();
+		clicked_event=null;
+		adapter.clear();
+		if (ClassUniverse.universeListOfAllEvents.size() > 0) {			
+			for (ClassEvent event : ClassUniverse.universeListOfAllEvents) {
+				adapter.add(event.title);
+				adapter.notifyDataSetChanged();
+			}
+		}
+		return false;
+		
+		// TODO Auto-generated method stub
+		
 	}
 }

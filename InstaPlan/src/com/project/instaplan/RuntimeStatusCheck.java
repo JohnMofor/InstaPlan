@@ -44,6 +44,7 @@ public class RuntimeStatusCheck extends Activity implements View.OnClickListener
 				post_content+="\nTime: "+event.time +" Date: " +event.date;
 				post_content+="\nLocation: "+event.location;
 				post_content+="\nDescription: "+event.description;
+				post_content+="\nIs Mine?: "+event.isMine;
 				post_content+="\n---------------Invited------------------";
 				post_content+="\nName----------Contact";
 				for(ClassPeople person: event.invited){

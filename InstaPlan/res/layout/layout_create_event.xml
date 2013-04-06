@@ -100,6 +100,12 @@
                 android:text="@string/createEvent_facebookStatus" />
 
             <Button
+                android:id="@+id/createEvent_toggle_gcm_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_toggle_gcm_button" />
+
+            <Button
                 android:id="@+id/createEvent_invite_local_contact_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -120,10 +126,10 @@
     </ScrollView>
 
     <Button
-        android:layout_weight="5"
         android:id="@+id/createEvent_done_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="5"
         android:text="@string/createEvent_done_button" />
 
 </LinearLayout>

@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class Intro extends Activity{
 	MediaPlayer aSong;
-	String tag = "MJ------>";
+	String tag = "MJ(Intro)------>";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -25,7 +25,7 @@ public class Intro extends Activity{
 				}catch(InterruptedException error){
 					error.printStackTrace();
 				}finally{
-					Intent showMenu = new Intent("com.project.instaplan.Menu");
+					Intent showMenu = new Intent("com.project.instaplan2.Menu");
 					startActivity(showMenu);
 				}
 			}

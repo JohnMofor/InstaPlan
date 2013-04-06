@@ -9,8 +9,10 @@ import android.widget.ListView;
 
 public class Menu extends ListActivity {
 
-	String classes[] = { "Sms", "Chatroom", "GetContacts", "FTP", "CreateEvent",
-			"RuntimeStatusCheck", "AllEvents", "Facebook", "GoogleMaps", "task10", "task11", "task11" };
+	String classes[] = { "Chatroom", "GetContacts", "Chatroom_ok",
+			"CreateEvent", "RuntimeStatusCheck", "AllEvents", "Facebook",
+			"GoogleMaps", "LocationActivity", "Downloader", "MessageActivity",
+			"GCMActivity", "PhoneRegistration", "Task 14", "Task 15" };
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -18,7 +20,7 @@ public class Menu extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		String item_clicked = classes[position];
 		try {
-			Class<?> ourClass = Class.forName("com.project.instaplan."
+			Class<?> ourClass = Class.forName("com.project.instaplan2."
 					+ item_clicked);
 			Intent ourIntent = new Intent(Menu.this, ourClass);
 			startActivity(ourIntent);

@@ -20,7 +20,7 @@ import android.provider.ContactsContract;
 
 public class GetContacts extends Activity implements View.OnClickListener {
 	// Instantiate ALl Public Variables Here.
-	String TAG = "MJ------>";
+	String TAG = "MJ(GetContact)------>";
 
 	ListView getContactsListView;
 	Button getContacts_done_button;
@@ -150,6 +150,7 @@ public class GetContacts extends Activity implements View.OnClickListener {
 		// TODO Auto-generated method stub
 		Toast.makeText(getApplicationContext(), "Selected Contacts Added",
 				Toast.LENGTH_SHORT).show();
+		databaseCursor.close();
 		finish();
 	}
 

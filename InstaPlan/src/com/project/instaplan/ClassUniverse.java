@@ -8,13 +8,25 @@ import java.util.HashMap;
 public class ClassUniverse {
 
 	static ArrayList<ClassEvent> universeListOfAllEvents = new ArrayList<ClassEvent>();
-	static HashMap<String, ClassEvent> universeEventLookUp = new HashMap<String, ClassEvent>();
-
-	static HashMap<String, ClassPeople> universePhoneNumberLookUp = new HashMap<String, ClassPeople>();
-	static HashMap<String, ClassPeople> universeEmailLookUp = new HashMap<String, ClassPeople>();
-	static HashMap<String, ClassPeople> universeFacebookIDLookUp = new HashMap<String, ClassPeople>();
-	static HashMap<String, ClassPeople> universeNameLookUp = new HashMap<String, ClassPeople>();
 	static ArrayList<ClassEvent> allUpdates = new ArrayList<ClassEvent>();
+	
+	
+	static boolean GCMEnabled=false;
+	public static boolean GCMPossible=false;
+	
+
+	public static HashMap<String, ClassPeople> universePhoneNumberLookUp = new HashMap<String, ClassPeople>();
+	public static HashMap<String, ClassPeople> universeEmailLookUp = new HashMap<String, ClassPeople>();
+	public static HashMap<String, ClassPeople> universeFacebookIDLookUp = new HashMap<String, ClassPeople>();
+	public static HashMap<String, ClassPeople> universeNameLookUp = new HashMap<String, ClassPeople>();
+	public static HashMap<String, ClassEvent> universeEventLookUp = new HashMap<String, ClassEvent>();
+	
+	public static String device_id="";
+	public static String mUserName="";
+	public static String regId="";
+	public static String GcmRegError="";
+	public static String mPhoneNumber="";
+	public static String mEmail="";
 
 	public static void createEvent(ClassEvent new_event) {
 		if (!universeListOfAllEvents.contains(new_event)) {
@@ -57,7 +69,7 @@ public class ClassUniverse {
 			return "Valid Person But Invalid Event";
 		}
 		if (!((person == null) && (event == null))) {
-			return Boolean.toString(event.invited_look_up.containsKey(person.name));
+			return Boolean.toString(event.invited_look_up.containsKey(person.phoneNumber));
 		}
 		return "Invalid Person & Event";
 	}

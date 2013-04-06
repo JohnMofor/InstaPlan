@@ -1,51 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="10sp"
-    android:weightSum="100" >
+<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" -->
+<!-- android:layout_width="match_parent" -->
+<!-- android:layout_height="match_parent" -->
+<!-- android:orientation="vertical"> -->
+<!-- android:padding="10sp" -->
+<!-- android:weightSum="100" > -->
 
-    <TextView
-        android:id="@+id/chatroom_textView_title"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="@string/chatroom_textView_title" />
+<!-- <TextView -->
+<!-- android:id="@+id/chatroom_textView_title" -->
+<!-- android:layout_width="fill_parent" -->
+<!-- android:layout_height="wrap_content" -->
+<!-- android:layout_weight="2" -->
+<!-- android:text="@string/chatroom_textView_title" /> -->
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="95"
-        android:padding="10sp" >
-
-        <LinearLayout
-            android:id="@+id/chatroom_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </LinearLayout>
-    </ScrollView>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/listViewBg"
+    android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/bottom_write_bar"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:orientation="horizontal" >
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/message_bar" >
 
         <EditText
             android:id="@+id/chatroom_entered_post_textView"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:layout_weight="20"
-            android:hint="@string/chatroom_hint" />
+            android:layout_margin="5sp"
+            android:layout_weight="1"
+            android:background="@drawable/message_field"
+            android:hint="@string/chatroom_hint"
+            android:padding="5sp"
+            android:textColor="@color/textFieldColor" />
+        <!-- android:id="@+id/text" -->
 
         <Button
             android:id="@+id/chatroom_post_button"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_weight="80"
-            android:text="@string/chatroom_button" />
+            android:layout_margin="5sp"
+            android:background="@drawable/send_button"
+            android:paddingBottom="5sp"
+            android:paddingLeft="15sp"
+            android:paddingRight="15sp"
+            android:paddingTop="5sp"
+            android:text="@string/chatroom_button"
+            android:textColor="#FFF" />
+        <!-- android:onClick="sendMessage" -->
     </LinearLayout>
 
-</LinearLayout>
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_above="@id/bottom_write_bar"
+        android:layout_alignParentTop="true"
+        android:cacheColorHint="#00000000"
+        android:divider="#00000000"
+        android:listSelector="#00000000" >
+    </ListView>
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/bottom_write_bar"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/main_empty_list" />
+
+</RelativeLayout>
