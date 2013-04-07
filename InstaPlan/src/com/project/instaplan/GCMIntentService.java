@@ -137,28 +137,36 @@ public class GCMIntentService extends GCMBaseIntentService {
 	}
 
 	private void updateGCMInbox(String msg, Context context) {
+		Log.i(logTag, "Updating GCM Inbox");
 		// Auto-generated method stub
-		if (ClassUniverse.universeAllEventHashLookUp.get(("Your GCM Inbox"
-				+ "00000000000").hashCode()) == null) {
+		int eventHash = ("Your GCM Inbox" + "00000000000").hashCode();
+		eventHash = (eventHash < 0 ? -eventHash:eventHash);
+		if (ClassUniverse.universeAllEventHashLookUp.get(eventHash) != null) {
+			Log.i(logTag, "This was not a new device, now saving to inbox");
 			ClassEvent event = ClassUniverse.universeAllEventHashLookUp
-					.get(("Your GCM Inbox" + "00000000000").hashCode());
+					.get(eventHash);
 			event.updateChatLog("external", msg, "GCM-Bot ");
+			Log.i(logTag, "Saved Message");
 		} else {
+			Log.i(logTag, "This was a new device, creating saving to inbox");
 			ClassEvent newEvent = new ClassEvent("Your GCM Inbox", "N/A",
 					"Messages sent to your GCM Address", "N/A", "N/A");
 			newEvent.serverIdCode = "000";
-			ClassUniverse.registerEvent(newEvent);
-			ClassPeople GCM = new ClassPeople("GCM Bot", "phoneNumber",
+			ClassPeople GCM = new ClassPeople("GCM-Bot", "phoneNumber",
 					"00000000000");
 			newEvent.makeHost(GCM);
-			newEvent.updateChatLog("external", msg, "GCM-Bot ");
+			ClassUniverse.registerEvent(newEvent);
+			newEvent.updateChatLog("external", msg, "GCM-Bot");
+			Log.i(logTag, "Saved Message");
 		}
 		// Sending out Intent if Chatroom was active...
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction("SMS_RECEIVED_ACTION");
+		Log.i(logTag, "Putting in for your gcm inbox: " + msg);
 		broadcastIntent.putExtra("smsFor" + "Your GCM Inbox", msg);
 		context.sendBroadcast(broadcastIntent);
 		notifyUser("GCM Inbox", "GCM Bot", context);
+		Log.i(logTag, "Done Updating GCM Inbox");
 	}
 
 	@Override
@@ -308,8 +316,9 @@ public class GCMIntentService extends GCMBaseIntentService {
 		}
 		event = new ClassEvent(out.get(0), out.get(4), out.get(1), out.get(2),
 				out.get(3));
-		ClassUniverse.registerEvent(event);
 		event.makeHost(creator);
+		ClassUniverse.registerEvent(event);
+
 	}
 
 	public String getContactDisplayNameByNumber(String number, Context inContext) {
@@ -666,6 +675,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 						"Successfully sent GCM Message to: "
 								+ ClassUniverse.universePhoneNumberLookUp
 										.get(senderPhoneNumber).name);
+				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM = true;
 			} else {
 				Log.i(logTag,
 						"Failed to send GCM Message to: "
@@ -734,56 +744,33 @@ public class GCMIntentService extends GCMBaseIntentService {
 		 * @return null if this sms was NOT associated with our app, smsbody
 		 *         without tags otherwise.
 		 */
-		Pattern pattern = Pattern.compile("%E(\\d*)%");
+
+		Pattern pattern = Pattern.compile("/-%(.*?)%-/");
 		Matcher matcher = pattern.matcher(smsBody);
 		if (matcher.find()) {
-			int index = Integer.parseInt(matcher.group(1));
+			int hashReceived = Integer.parseInt(matcher.group(1));
+			hashReceived = (hashReceived < 0 ? -hashReceived : hashReceived);
 
-			Log.i(logTag, "A valid SMS Tag was found: " + matcher.group(1));
-			Log.i(logTag, "Setting person to APPLESS mode");
-			person.hasApp = false;
-			person.hasGCM = false; // not really... lol
+			person.hasApp = true;
+			person.hasGCM = true; // not really... lol
 
-			if (ClassUniverse.universeAllMyEventCreationNumberLookUp.get(index) != null) {
-				// Event was found!
-				event = ClassUniverse.universeAllMyEventCreationNumberLookUp
-						.get(index);
-				Log.i(logTag, "Event found, from APPLESS PERSON : "
-						+ event.title);
-				return smsBody.replaceAll("%E" + matcher.group(1) + "%", "");
+			if (ClassUniverse.universeAllEventHashLookUp.get(hashReceived) != null) {
+				// Event Found!
+				event = ClassUniverse.universeAllEventHashLookUp
+						.get(hashReceived);
+				Log.i(logTag, "Valid event: " + event.title);
+				return smsBody.replaceAll("/-%" + matcher.group(1) + "%-/", "");
 			} else {
-				// Event was missed.
-				Log.i(logTag, "No event with creation Number: " + (index));
+				// Event Missed!
+				Log.i(logTag, "INVALID EVENT: " + matcher.group(1));
 				return null;
 			}
+
 		} else {
-			pattern = Pattern.compile("/-%(.*?)%-/");
-			matcher = pattern.matcher(smsBody);
-			if (matcher.find()) {
-				int hashReceived = Integer.parseInt(matcher.group(1));
-
-				person.hasApp = true;
-				person.hasGCM = true; // not really... lol
-
-				if (ClassUniverse.universeAllEventHashLookUp.get(hashReceived) != null) {
-					// Event Found!
-					event = ClassUniverse.universeAllEventHashLookUp
-							.get(hashReceived);
-					Log.i(logTag, "Valid event: " + event.title);
-					return smsBody.replaceAll("/-%" + matcher.group(1) + "%-/",
-							"");
-				} else {
-					// Event Missed!
-					Log.i(logTag, "INVALID EVENT: " + matcher.group(1));
-					return null;
-				}
-
-			} else {
-				Log.i(logTag, "This is a REGULAR SMS!!");
-				return null;
-			}
-
+			Log.i(logTag, "This is a REGULAR SMS!!");
+			return null;
 		}
+
 	}
 
 }

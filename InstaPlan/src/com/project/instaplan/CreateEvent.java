@@ -48,14 +48,15 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	CheckBox createEvent_facebookStatus_checkBox;
 	CheckBox createEvent_enable_gcm_checkBox;
 	Button createEvent_invite_local_contact_button;
-	Button createEvent_invite_facebook_friend_button;
-	Button createEvent_invite_non_local_contact_button;
+//	Button createEvent_invite_facebook_friend_button;
+//	Button createEvent_invite_non_local_contact_button;
 	Button createEvent_done_button, createEvent_toggle_gcm_button;
 
 	final static int GetContactsResultCode = 100;
 	boolean sessionHasInternet = false;
 
 	ClassEvent createdEvent;
+	
 
 	ArrayList<String> names = new ArrayList<String>();
 	ArrayList<String> phoneNumbers = new ArrayList<String>();
@@ -119,8 +120,8 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 
 	private void setClickListeners() {
 		createEvent_invite_local_contact_button.setOnClickListener(this);
-		createEvent_invite_facebook_friend_button.setOnClickListener(this);
-		createEvent_invite_non_local_contact_button.setOnClickListener(this);
+//		createEvent_invite_facebook_friend_button.setOnClickListener(this);
+//		createEvent_invite_non_local_contact_button.setOnClickListener(this);
 		createEvent_done_button.setOnClickListener(this);
 		createEvent_toggle_gcm_button.setOnClickListener(this);
 	}
@@ -213,13 +214,13 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			return false;
 		} else {
 			if (done) {
-				Toast.makeText(getApplicationContext(),
-						allInputs.get("Title") + " Created", Toast.LENGTH_SHORT)
-						.show();
+//				Toast.makeText(getApplicationContext(),
+//						allInputs.get("Title") + " Created", Toast.LENGTH_SHORT)
+//						.show();
 				return true;
 			} else {
-				Toast.makeText(getApplicationContext(), "Select Contacts",
-						Toast.LENGTH_SHORT).show();
+//				Toast.makeText(getApplicationContext(), "Select Contacts",
+//						Toast.LENGTH_SHORT).show();
 				return true;
 			}
 		}
@@ -228,6 +229,9 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 
 	private void doDoneCode() {
 		if (createTheEvent()) {
+			Toast.makeText(getApplicationContext(),
+					allInputs.get("Title") + " Created", Toast.LENGTH_SHORT)
+					.show();
 			Log.i(logTag, "User entered a display name: "
 					+ ClassUniverse.mUserName);
 			if (phoneNumbers.size() > 0) {
@@ -393,8 +397,9 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 		createdEvent = new ClassEvent(allInputs.get("Title"),
 				allInputs.get("Location"), allInputs.get("Description"),
 				allInputs.get("Time"), allInputs.get("Date"));
+		createdEvent.makeHost(new ClassPeople(ClassUniverse.mUserName, "phoneNumber",ClassUniverse.mPhoneNumber));
+		createdEvent.isMine = true;
 		if (ClassUniverse.registerEvent(createdEvent)) {
-			createdEvent.isMine = true;
 			return true;
 		} else {
 			showMessage("ERROR: Event with title: " + allInputs.get("Title")

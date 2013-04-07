@@ -16,6 +16,7 @@ public class ClassUniverse {
 	public static String mPhoneNumber = "";
 	public static String mEmail = "";
 	public static int numberOfAllMyEventsEverCreated = 1;
+	
 
 	static ArrayList<ClassEvent> universeListOfAllEvents = new ArrayList<ClassEvent>();
 	static ArrayList<ClassEvent> allUpdates = new ArrayList<ClassEvent>();
@@ -36,11 +37,11 @@ public class ClassUniverse {
 	public static boolean registerEvent(ClassEvent new_event) {
 		int eventHash = (new_event.title + new_event.host.phoneNumber)
 				.hashCode();
+		eventHash = (eventHash < 0 ? -eventHash:eventHash);
 		if ((universeAllEventHashLookUp.get(eventHash) == null)) {
 			//Add to look-up
 			universeAllEventHashLookUp.put(eventHash, new_event);
 			//Add to Arrays... (why??-I'll take it off)
-			universeListOfAllEvents.add(new_event);
 			universeListOfAllEvents.add(new_event);
 			//If mine, set stuffs... :)
 			if (new_event.isMine) {

@@ -58,6 +58,7 @@ public class ClassEvent {
 	public void makeHost(ClassPeople new_person) {
 		this.host = new_person;
 		this.eventHash=(this.title+new_person.phoneNumber).hashCode();
+		this.eventHash = (this.eventHash < 0 ? -this.eventHash:this.eventHash);
 		if (!this.host.allEventsParticipating.contains(this)) {
 			this.host.allEventsParticipating.add(this);
 		}

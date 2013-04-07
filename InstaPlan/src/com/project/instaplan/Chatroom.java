@@ -162,6 +162,7 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 			String title = incomming_intent.getStringExtra("Title").toString();
 			String hostPhoneNumber = incomming_intent.getStringExtra("hostPhoneNumber").toString();
 			eventHash=(title+hostPhoneNumber).hashCode();
+			eventHash = (eventHash < 0 ? -eventHash:eventHash);
 			Log.i(tag, "Incomming intent had title: " + title);
 			if (ClassUniverse.universeAllEventHashLookUp.get(eventHash)!=null) {
 				Log.i(tag, "Event found, now populating Chatroom.");
@@ -335,10 +336,12 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 			super.onPostExecute(result);
 			if (result == HttpURLConnection.HTTP_OK) {
 				Log.i(tag, "Successfully sent GCM Message to: " + receiverName);
+				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM=true;
 			} else {
 				Log.i(tag, "Failed to send GCM Message to: " + receiverName);
 				SmsManager sms = SmsManager.getDefault();
 				sms.sendTextMessage(TophoneNumber, null, content, null, null);
+				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM=false;
 			}
 		}
 

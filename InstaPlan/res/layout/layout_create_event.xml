@@ -111,17 +111,17 @@
                 android:layout_height="wrap_content"
                 android:text="@string/createEvent_invite_local_contact_button" />
 
-            <Button
-                android:id="@+id/createEvent_invite_facebook_friend_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/createEvent_invite_facebook_friend_button" />
+<!--             <Button -->
+<!--                 android:id="@+id/createEvent_invite_facebook_friend_button" -->
+<!--                 android:layout_width="match_parent" -->
+<!--                 android:layout_height="wrap_content" -->
+<!--                 android:text="@string/createEvent_invite_facebook_friend_button" /> -->
 
-            <Button
-                android:id="@+id/createEvent_invite_non_local_contact_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/createEvent_invite_non_local_contact_button" />
+<!--             <Button -->
+<!--                 android:id="@+id/createEvent_invite_non_local_contact_button" -->
+<!--                 android:layout_width="match_parent" -->
+<!--                 android:layout_height="wrap_content" -->
+<!--                 android:text="@string/createEvent_invite_non_local_contact_button" /> -->
         </LinearLayout>
     </ScrollView>
 

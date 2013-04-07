@@ -19,7 +19,7 @@
     <string name="createEvent_locationHint">Can be updated at will!</string>
     <string name="createEvent_eventDescription">Give a brief Event Description</string>
     <string name="createEvent_descriptionHint">Get Hype!</string>
-    <string name="createEvent_facebookStatus">Synch with Facebook?</string>
+    <string name="createEvent_facebookStatus">Sync with Facebook?</string>
     <string name="createEvent_invite_local_contact_button">Invite local contacts</string>
     <string name="createEvent_invite_facebook_friend_button">Invite Facebook Friends</string>
     <string name="createEvent_invite_non_local_contact_button">Invite Others(Non local email/phone)</string>
@@ -53,7 +53,7 @@
 	<string name="phoneRegistration_userEmail_textView">Email (Optional)</string>
 	<string name="phoneRegistration_userName_hint">Incredible Hulk</string>
 	<string name="phoneRegistration_userName_textView">Preferred Name (Optional)</string>
-	<string name="phoneRegistration_phoneNumber_textView">10-digits Phone Number)</string>
+	<string name="phoneRegistration_phoneNumber_textView">11-digits Phone Number</string>
 	<string name="phoneRegistration_register_button">Register</string>
 	<string name="phoneRegistration_unregister_button">Unregister</string>
 	

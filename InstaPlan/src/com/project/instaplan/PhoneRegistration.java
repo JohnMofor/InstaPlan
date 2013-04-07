@@ -103,7 +103,7 @@ public class PhoneRegistration extends Activity implements View.OnClickListener 
 	private boolean dataOk() {
 		int length = phoneRegistration_phoneNumber_editText.getText()
 				.toString().length();
-		return ((length > 9) && (length < 12));
+		return length==11;
 	}
 
 	@Override
@@ -180,7 +180,7 @@ public class PhoneRegistration extends Activity implements View.OnClickListener 
 		@Override
 		protected Void doInBackground(Void... params) {
 			Long start = System.currentTimeMillis();
-			while(((System.currentTimeMillis()-start)<3000)){
+			while(((System.currentTimeMillis()-start)<5000)){
 				
 			}
 			Log.i(tag, "Registration time: " + Long.toString(System.currentTimeMillis()-start));

@@ -45,6 +45,9 @@ public class RuntimeStatusCheck extends Activity implements View.OnClickListener
 				post_content+="\nLocation: "+event.location;
 				post_content+="\nDescription: "+event.description;
 				post_content+="\nIs Mine?: "+event.isMine;
+				post_content+="\nEventServerCode: "+event.serverIdCode;
+				post_content+="\nEventHashCode: "+event.eventHash;
+				post_content+="\nSize of message board: "+event.messages.size();
 				post_content+="\n---------------Invited------------------";
 				post_content+="\nName----------Contact";
 				for(ClassPeople person: event.invited){

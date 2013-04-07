@@ -328,6 +328,7 @@ public class SMSReceiver extends BroadcastReceiver {
 		Matcher matcher = pattern.matcher(smsBody);
 		if (matcher.find()) {
 			int index = Integer.parseInt(matcher.group(1));
+			index = (index < 0 ? -index:index);
 
 			Log.i(logTag, "A valid SMS Tag was found: " + matcher.group(1));
 			Log.i(logTag, "Setting person to APPLESS mode");
@@ -351,7 +352,8 @@ public class SMSReceiver extends BroadcastReceiver {
 			matcher = pattern.matcher(smsBody);
 			if (matcher.find()) {
 				int hashReceived = Integer.parseInt(matcher.group(1));
-
+				hashReceived = (hashReceived < 0 ? -hashReceived:hashReceived);
+				
 				person.hasApp = true;
 				person.hasGCM = true; // not really... lol
 
@@ -391,8 +393,8 @@ public class SMSReceiver extends BroadcastReceiver {
 		}
 		event = new ClassEvent(out.get(0), out.get(4), out.get(1), out.get(2),
 				out.get(3));
-		ClassUniverse.registerEvent(event);
 		event.makeHost(creator);
+		ClassUniverse.registerEvent(event);
 	}
 
 	private String smsToCreateCommand(String smsBody) {
