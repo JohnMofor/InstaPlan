@@ -114,6 +114,11 @@ public class GetContacts extends Activity implements View.OnClickListener {
 				String phoneNumber = contact
 						.getString(contact
 								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				// The phoneNumber could be +1 (xxx) xxx-yyyy... remove all the non digits.
+				phoneNumber = phoneNumber.replaceAll("\\D+","");
+				if(phoneNumber.length()==10){
+					phoneNumber="1"+phoneNumber;
+				}
 				contactNamesString.add(name);
 				contactPhonesString.add(phoneNumber);
 

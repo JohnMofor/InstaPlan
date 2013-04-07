@@ -59,6 +59,12 @@ public class SMSReceiver extends BroadcastReceiver {
 					.getOriginatingAddress().toString();
 			Log.i(logTag, "Phone number of sender: " + phoneNumber
 					+ ", now looking for name matching that.");
+			
+			// The phoneNumber could be +1 (xxx) xxx-yyyy... remove all the non digits.
+			phoneNumber = phoneNumber.replaceAll("\\D+","");
+			if(phoneNumber.length()==10){
+				phoneNumber="1"+phoneNumber;
+			}
 
 			// Unifying all SMS Parts into 1.
 			String smsBody = "";

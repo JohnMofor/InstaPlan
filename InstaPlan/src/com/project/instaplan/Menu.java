@@ -9,10 +9,12 @@ import android.widget.ListView;
 
 public class Menu extends ListActivity {
 
-	String classes[] = { "Chatroom", "GetContacts", "Chatroom_ok",
-			"CreateEvent", "RuntimeStatusCheck", "AllEvents", "Facebook",
-			"GoogleMaps", "LocationActivity", "Downloader", "MessageActivity",
-			"GCMActivity", "PhoneRegistration", "Task 14", "Task 15" };
+	// String classes[] = { "Chatroom", "GetContacts", "Chatroom_ok",
+	// "CreateEvent", "RuntimeStatusCheck", "AllEvents", "Facebook",
+	// "GoogleMaps", "LocationActivity", "Downloader", "MessageActivity",
+	// "GCMActivity", "PhoneRegistration", "Task 14", "Task 15" };
+	String classes[] = { "AllEvents","PhoneRegistration", "CreateEvent","Chatroom", 
+			"RuntimeStatusCheck"  };
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -37,5 +39,4 @@ public class Menu extends ListActivity {
 		setListAdapter(new ArrayAdapter<String>(Menu.this,
 				android.R.layout.simple_expandable_list_item_1, classes));
 	}
-
 }

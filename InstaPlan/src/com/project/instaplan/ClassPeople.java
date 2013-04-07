@@ -19,6 +19,11 @@ public class ClassPeople {
 			String contactType = the_contactType;
 			if (contactType.contentEquals("phoneNumber")) {
 				phoneNumber = contact;
+				// The phoneNumber could be +1 (xxx) xxx-yyyy... remove all the non digits.
+				phoneNumber = phoneNumber.replaceAll("\\D+","");
+				if(phoneNumber.length()==10){
+					phoneNumber="1"+phoneNumber;
+				}
 				if (!hasPhoneNumber()) {
 					contactTypes.add("phoneNumber");
 					ClassUniverse.universePhoneNumberLookUp.put(phoneNumber,
@@ -47,7 +52,13 @@ public class ClassPeople {
 //		ClassUniverse.universeNameLookUp.put(name, this);
 		String contactType = the_contactType;
 		if (contactType.contentEquals("phoneNumber")) {
+			// The phoneNumber could be +1 (xxx) xxx-yyyy... remove all the non digits.
+			
 			this.phoneNumber = contact;
+			this.phoneNumber = this.phoneNumber.replaceAll("\\D+","");
+			if(phoneNumber.length()==10){
+				this.phoneNumber="1"+this.phoneNumber;
+			}
 			if (!hasPhoneNumber()) {
 				this.contactTypes.add("phoneNumber");
 				ClassUniverse.universePhoneNumberLookUp.put(phoneNumber, this);
