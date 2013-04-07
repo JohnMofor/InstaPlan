@@ -341,7 +341,7 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 				Log.i(tag, "Failed to send GCM Message to: " + receiverName);
 				SmsManager sms = SmsManager.getDefault();
 				sms.sendTextMessage(TophoneNumber, null, content, null, null);
-				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM=false;
+//				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM=false;
 			}
 		}
 

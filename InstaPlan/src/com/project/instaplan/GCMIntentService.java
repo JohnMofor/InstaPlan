@@ -99,6 +99,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			String phoneNumber = receivedMessage[0];
 			String preferred_name = receivedMessage[1];
 			String smsBody = receivedMessage[2];
+			
 			switch (getSmsType(smsBody)) {
 			case 0:
 				// Just Inbox
@@ -681,7 +682,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 						"Failed to send GCM Message to: "
 								+ ClassUniverse.universePhoneNumberLookUp
 										.get(senderPhoneNumber).name);
-				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM = false;
+//				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM = false;
 				SmsManager sms = SmsManager.getDefault();
 				sms.sendTextMessage(TophoneNumber, null, content_sms, null,
 						null);
@@ -747,6 +748,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 		Pattern pattern = Pattern.compile("/-%(.*?)%-/");
 		Matcher matcher = pattern.matcher(smsBody);
+		
 		if (matcher.find()) {
 			int hashReceived = Integer.parseInt(matcher.group(1));
 			hashReceived = (hashReceived < 0 ? -hashReceived : hashReceived);
