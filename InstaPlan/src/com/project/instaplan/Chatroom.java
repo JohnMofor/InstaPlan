@@ -53,11 +53,14 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 
 	String tag = "MJ(Chatroom)------>";
 
-	ClassEvent event = new ClassEvent("Untitled Event", "", "", "", "");
+	ClassEvent event = new ClassEvent("Empty Event 999", "", "", "", "");
 
 	NotificationManager nm;
+
+	int eventHash;
 	int ERROR_RESULT_CODE2 = 999;
 	int ERROR_RESULT_CODE1 = 666;
+	int GCM_SERVER_RESPONSE_WAIT_TIME = 3000;
 	boolean sessionHasInternet = false;
 	boolean valid;
 
@@ -109,7 +112,7 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 			showMessage("Not Internet texting");
 		} else {
 			Log.i(tag, "Session has internet, now fetching eventIdCode if new");
-			if (event.eventIdCode == null) {
+			if (event.serverIdCode == null) {
 				Log.i(tag, "INDEED was new!");
 				if (valid) {
 					new GetEventId().execute(event.host.phoneNumber,
@@ -157,14 +160,15 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 
 		if (incomming_intent.hasExtra("Title")) {
 			String title = incomming_intent.getStringExtra("Title").toString();
+			String hostPhoneNumber = incomming_intent.getStringExtra("hostPhoneNumber").toString();
+			eventHash=(title+hostPhoneNumber).hashCode();
 			Log.i(tag, "Incomming intent had title: " + title);
-			if (ClassUniverse.universeEventLookUp.containsKey(title)) {
+			if (ClassUniverse.universeAllEventHashLookUp.get(eventHash)!=null) {
 				Log.i(tag, "Event found, now populating Chatroom.");
 				out = true;
-				event = ClassUniverse.universeEventLookUp.get(title);
+				event = ClassUniverse.universeAllEventHashLookUp.get(eventHash);
 				event.externalUpdateCount = 0;
 				adapter = new AwesomeAdapter(this, event.messages);
-				
 				setListAdapter(adapter);
 			}
 		} else {
@@ -196,7 +200,7 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 			if (chatroom_entered_post_textView.getText().toString().length() != 0) {
 				String title = event.title;
 				Log.i(tag, "Event title: " + title);
-				if (ClassUniverse.universeEventLookUp.containsKey(title)) {
+				if (!event.title.equals("Empty Event 999")){
 					Log.i(tag, "Event found, now updating event");
 					if (event.hasUpdate()) {
 						Log.i(tag,
@@ -232,8 +236,9 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 		// post_content.replaceAll("%", "percent");
 		// Auto-generated method stub
 
+		
 		String post_content_appless = post_content;
-		String post_content_app = post_content_appless + " /-%" + event.title
+		String post_content_app = post_content_appless + " /-%" + event.eventHash
 				+ "%-/";
 		// post_content.replaceAll("%", "percent");
 		if (sessionHasInternet && ClassUniverse.GCMEnabled) {
@@ -339,14 +344,13 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 
 		@Override
 		protected Integer doInBackground(String... params) {
-			// TODO Auto-generated method stub
 			URL url;
 			TophoneNumber = params[0];
 			content = params[2];
 			receiverName = params[1];
 
 			String strUrl = "http://mj-server.mit.edu/instaplan/command/"
-					+ event.eventIdCode + "/?command=sendSmsTo"
+					+ event.serverIdCode + "/?command=sendSmsTo"
 					+ URLEncoder.encode(TophoneNumber) + "&content="
 					+ URLEncoder.encode(content) + "&hostDeviceId="
 					+ URLEncoder.encode(ClassUniverse.device_id)
@@ -358,7 +362,7 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 				HttpURLConnection urlConnection = (HttpURLConnection) url
 						.openConnection();
 				urlConnection.setRequestMethod("GET");
-				urlConnection.setConnectTimeout(3000);
+				urlConnection.setConnectTimeout(GCM_SERVER_RESPONSE_WAIT_TIME);
 				urlConnection.connect();
 				int out = urlConnection.getResponseCode();
 				String server_reply = urlConnection.getResponseMessage();
@@ -405,7 +409,7 @@ public class Chatroom extends ListActivity implements View.OnClickListener {
 			// Auto-generated method stub
 			super.onPostExecute(result);
 			if (!result.equals("Error")) {
-				event.eventIdCode = result;
+				event.serverIdCode = result;
 				Log.i(tag, "EventIdCode: " + result);
 			}
 			Log.i(tag, "Just set Event's ID code :) " + result);

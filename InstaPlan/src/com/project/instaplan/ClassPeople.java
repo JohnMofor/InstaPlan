@@ -13,7 +13,7 @@ public class ClassPeople {
 	public ClassPeople(String a_name, String the_contactType, String contact,
 			ClassEvent the_event) {
 		name = a_name;
-		ClassUniverse.universeNameLookUp.put(name, this);
+//		ClassUniverse.universeNameLookUp.put(name, this);
 		if (!allEventsParticipating.contains(the_event)) {
 			allEventsParticipating.add(the_event);
 			String contactType = the_contactType;
@@ -24,47 +24,47 @@ public class ClassPeople {
 					ClassUniverse.universePhoneNumberLookUp.put(phoneNumber,
 							this);
 				}
-			} else if (contactType.contentEquals("facebookID")) {
-				facebookID = contact;
-				if (!hasFacebookID()) {
-					contactTypes.add("facebookID");
-					ClassUniverse.universeFacebookIDLookUp
-							.put(facebookID, this);
-				}
-
-			} else if (contactType.contentEquals("email")) {
-				email = contact;
-				if (!hasEmail()) {
-					contactTypes.add("email");
-					ClassUniverse.universeEmailLookUp.put(email, this);
-				}
+//			} else if (contactType.contentEquals("facebookID")) {
+//				facebookID = contact;
+//				if (!hasFacebookID()) {
+//					contactTypes.add("facebookID");
+//					ClassUniverse.universeFacebookIDLookUp
+//							.put(facebookID, this);
+//				}
+//
+//			} else if (contactType.contentEquals("email")) {
+//				email = contact;
+//				if (!hasEmail()) {
+//					contactTypes.add("email");
+//					ClassUniverse.universeEmailLookUp.put(email, this);
+//				}
 			}
 		}
 	}
 
 	public ClassPeople(String a_name, String the_contactType, String contact) {
-		name = a_name;
-		ClassUniverse.universeNameLookUp.put(name, this);
+		this.name = a_name;
+//		ClassUniverse.universeNameLookUp.put(name, this);
 		String contactType = the_contactType;
 		if (contactType.contentEquals("phoneNumber")) {
-			phoneNumber = contact;
+			this.phoneNumber = contact;
 			if (!hasPhoneNumber()) {
 				this.contactTypes.add("phoneNumber");
 				ClassUniverse.universePhoneNumberLookUp.put(phoneNumber, this);
 			}
-		} else if (contactType.contentEquals("facebookID")) {
-			facebookID = contact;
-			if (!hasFacebookID()) {
-				this.contactTypes.add("facebookID");
-				ClassUniverse.universeFacebookIDLookUp.put(facebookID, this);
+//		} else if (contactType.contentEquals("facebookID")) {
+//			facebookID = contact;
+//			if (!hasFacebookID()) {
+//				this.contactTypes.add("facebookID");
+//				ClassUniverse.universeFacebookIDLookUp.put(facebookID, this);
 			}
-		} else if (contactType.contentEquals("email")) {
-			email = contact;
-			if (!hasEmail()) {
-				this.contactTypes.add("email");
-				ClassUniverse.universeEmailLookUp.put(email, this);
-			}
-		}
+//		} else if (contactType.contentEquals("email")) {
+//			email = contact;
+//			if (!hasEmail()) {
+//				this.contactTypes.add("email");
+//				ClassUniverse.universeEmailLookUp.put(email, this);
+//			}
+//		}
 	}
 
 	public Boolean hasPhoneNumber() {
@@ -117,6 +117,10 @@ public class ClassPeople {
 		}
 		return "NO Contact";
 
+	}
+	
+	public boolean isParticipatingIn(ClassEvent event){
+		return this.allEventsParticipating.contains(event);
 	}
 
 }

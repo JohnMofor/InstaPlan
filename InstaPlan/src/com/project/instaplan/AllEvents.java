@@ -78,6 +78,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 		Intent sendToChatRoom = new Intent("com.project.instaplan2.Chatroom");
 		Log.i(logTag, "Putting Title Extra: " + clicked_event.title);
 		sendToChatRoom.putExtra("Title", clicked_event.title);
+		sendToChatRoom.putExtra("hostPhoneNumber", clicked_event.host.phoneNumber);
 		startActivity(sendToChatRoom);
 	}
 

@@ -51,6 +51,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	int ERROR_RESULT_CODE2 = 999;
 	int ERROR_RESULT_CODE1 = 666;
 	boolean sessionHasInternet = true;
+	boolean isnew = false;
 	ClassEvent event;
 
 	public static String API_URL = "http://mj-server.mit.edu/gcm/v1/device/";
@@ -88,84 +89,47 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.i(LOG_TAG, "Just received a GCM message!: " + msg);
 		Log.i(logTag, "Splitting message to PhoneNumber, content");
 		String[] receivedMessage = msg.split("%xd%");
-		Log.i(logTag, "Spilt text: "+ "sender phoneNumber: "+receivedMessage[0]+" sender name:"+receivedMessage[1]+" 2:"+receivedMessage[2]);
-		
-		ClassPeople person;
+
 		if (receivedMessage.length > 2) {
-			
+			Log.i(logTag, "Spilt text: " + "sender phoneNumber: "
+					+ receivedMessage[0] + " sender preferred_name:"
+					+ receivedMessage[1] + " 2:" + receivedMessage[2]);
+
 			// Resolving contact name from phone number------------
 			String phoneNumber = receivedMessage[0];
-			Log.i(logTag, "Embedded GCM sender PhoneNumber: " + phoneNumber);
-
-			// Test 1: Incoming Phonenumber is in contacts. Just get and use
-			String name = getContactDisplayNameByNumber(phoneNumber, context);
-			
-			if (name == null) {
-				if (!ClassUniverse.universePhoneNumberLookUp
-						.containsKey(phoneNumber)) {
-					
-					// Test 2: Incoming Phonenumber is new... :D Associate person with app.
-					Log.i(logTag, "New person. We give the person his/her preferred name: "+ receivedMessage[1]);
-					name = receivedMessage[1];
-					ClassPeople newPerson = new ClassPeople(name + " (-gcm)",
-							"phoneNumber", phoneNumber);
-					newPerson.hasApp = true;
-					newPerson.hasGCM = true;
-					person = newPerson;
-				}else{
-					// Test 3: Incoming Phonenumber is Not new... 
-					Log.i(logTag,"This an already known GCM user...: "+name);
-					person = ClassUniverse.universePhoneNumberLookUp.get(phoneNumber);
-					person.name=receivedMessage[1];
-					person.hasApp=true;
-					person.hasGCM=true;
-				}
-			}else{
-				Log.i(logTag, "Name belongs to Contact list: "+ name);
-				if(ClassUniverse.universePhoneNumberLookUp.containsKey(phoneNumber)){
-					person = ClassUniverse.universePhoneNumberLookUp.get(phoneNumber);
-					person.name=name;
-					person.hasApp=true;
-					person.hasGCM=true;
-				}else{
-					ClassPeople newPerson = new ClassPeople(name,
-							"phoneNumber", phoneNumber);
-					newPerson.hasApp = true;
-					newPerson.hasGCM = true;
-					person = newPerson;
-				}
-			}
-			
-			name = person.name;
-			
-			// By here, we are guaranteed to have a person ... 
-			
-			
-			Log.i(logTag, "Resolved GCM sender Name: " + name);
+			String preferred_name = receivedMessage[1];
 			String smsBody = receivedMessage[2];
-			Log.i(logTag, "GCM message proper: " + smsBody);
-
 			switch (getSmsType(smsBody)) {
 			case 0:
+				// Just Inbox
 				Log.i(logTag, "This was a regular GCM SMS. Sent To inbox");
 				updateGCMInbox(msg, context);
 				break;
 			case 1:
-				Log.i(logTag, "Found person: " + person.name);
-				// getting event.
-				ArrayList<String> processedSMS = decodingComnandFromSms(person,
-						smsBody);
-				if (executeSmsCommand(processedSMS, context, person,name)) {
+				// Event update request
+				Log.i(logTag, "This is an Event update");
+				ClassPeople sender = giveMePerson(phoneNumber, context,
+						preferred_name);
+				String processedSMS = decodingComnandFromSms(sender, smsBody);
+				if (processedSMS == null) {
+					// Either a failed request, or just a troller, send to
+					// inbox.
+					updateGCMInbox(msg, context);
+					break;
+				}
+
+				if (executeSmsCommand(processedSMS, sender, context)) {
 					Log.i(logTag, "Event title we will be broadcasting: "
-							+ processedSMS.get(0));
-					notifyUser(processedSMS.get(0), name, context);
+							+ event.title);
+					notifyUser(event.title, sender.name, context);
 				}
 				break;
 			case 2: // Event Creation
 				Log.i(logTag, "This is an Event Creation");
-				createEventFromSms(smsBody, name, phoneNumber, context);
-				notifyUser(name, context);
-
+				ClassPeople creator = giveMePerson(phoneNumber, context,
+						preferred_name);
+				createEventFromSms(smsBody, creator, context);
+				notifyUser(creator.name, context);
 			}
 		} else {
 			updateGCMInbox(msg, context);
@@ -174,15 +138,16 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 	private void updateGCMInbox(String msg, Context context) {
 		// Auto-generated method stub
-		if (ClassUniverse.universeEventLookUp.containsKey("Your GCM Inbox")) {
-			ClassEvent event = ClassUniverse.universeEventLookUp
-					.get("Your GCM Inbox");
+		if (ClassUniverse.universeAllEventHashLookUp.get(("Your GCM Inbox"
+				+ "00000000000").hashCode()) == null) {
+			ClassEvent event = ClassUniverse.universeAllEventHashLookUp
+					.get(("Your GCM Inbox" + "00000000000").hashCode());
 			event.updateChatLog("external", msg, "GCM-Bot ");
 		} else {
 			ClassEvent newEvent = new ClassEvent("Your GCM Inbox", "N/A",
 					"Messages sent to your GCM Address", "N/A", "N/A");
-			newEvent.eventIdCode = "000";
-			ClassUniverse.createEvent(newEvent);
+			newEvent.serverIdCode = "000";
+			ClassUniverse.registerEvent(newEvent);
 			ClassPeople GCM = new ClassPeople("GCM Bot", "phoneNumber",
 					"00000000000");
 			newEvent.makeHost(GCM);
@@ -330,56 +295,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 		}
 	}
 
-	public ArrayList<String> decodingComnandFromSms(ClassPeople person,
-			String smsBody) {
-		ArrayList<String> out = new ArrayList<String>();
-		Pattern pattern = Pattern.compile("/-%(.*?)%-/");
-		Matcher matcher = pattern.matcher(smsBody);
-		if (matcher.find()) {
-			person.hasApp = true;
-			if (ClassUniverse.universeEventLookUp.containsKey(matcher.group(1))) {
-				Log.i(logTag, "Valid event: " + matcher.group(1));
-				out.add(matcher.group(1));
-				out.add(smsBody.replaceAll("/-%" + matcher.group(1) + "%-/", ""));
-				return out;
-			} else {
-				Log.i(logTag, "INVALID EVENT: " + matcher.group(1));
-				out.add(null);
-				out.add(smsBody);
-				return out;
-			}
-		}
-		out.add(null);
-		out.add(smsBody);
-		return out;
-	}
-
-	public void createEventFromSms(String smsBody, String name,
-			String phoneNumber, Context context) {
-
-		// abortBroadcast();
-		Log.i(logTag, "This was a valid Event Creating Command");
-
+	public void createEventFromSms(String smsBody, ClassPeople creator,
+			Context context) {
+		Log.i(logTag, "This was a valid Event Creating GCM Command");
 		ArrayList<String> out = new ArrayList<String>();
 		Pattern pattern = Pattern.compile("%(.*?)%");
 		String processedBody = smsToCreateCommand(smsBody);
 		Matcher matcher = pattern.matcher(processedBody);
-		ClassPeople person;
 		while (matcher.find()) {
 			Log.i(logTag, matcher.group());
 			out.add(matcher.group(1));
 		}
-		ClassEvent newEvent = new ClassEvent(out.get(0), out.get(4),
-				out.get(1), out.get(2), out.get(3));
-		ClassUniverse.createEvent(newEvent);
-		if (ClassUniverse.universeNameLookUp.containsKey(name)) {
-			person = (ClassUniverse.universeNameLookUp.get(name));
-		} else {
-			person = new ClassPeople(name, "phoneNumber", phoneNumber);
-		}
-		person.hasApp = true;
-		person.hasGCM=true;
-		newEvent.makeHost(person);
+		event = new ClassEvent(out.get(0), out.get(4), out.get(1), out.get(2),
+				out.get(3));
+		ClassUniverse.registerEvent(event);
+		event.makeHost(creator);
 	}
 
 	public String getContactDisplayNameByNumber(String number, Context inContext) {
@@ -441,44 +371,56 @@ public class GCMIntentService extends GCMBaseIntentService {
 		return 0;
 	}
 
-	private boolean executeSmsCommand(ArrayList<String> processedSMS,
-			Context context, ClassPeople person,String senderName) {
+	private boolean executeSmsCommand(String processedSMS, ClassPeople sender,
+			Context context) {
 		boolean out = false;
-		String name = person.name;
+
 		Log.i(logTag, "About to executeSmsCommand");
-		if (processedSMS.get(0) != null) {
-			event = ClassUniverse.universeEventLookUp
-					.get(processedSMS.get(0));
-			if (!(ClassUniverse.isPersonParticipatingInEvent("name", name,
-					event.title).contentEquals("true"))) {
-				Log.i(logTag, "Inviting person into event.");
-//				event.invite(person); //SEND TO ONLY THE HOST!!
+		if (event != null) {
+			if (sender.isParticipatingIn(event) || isnew) {
+				Log.i(logTag, sender.name + " is associated with this event: "
+						+ processedSMS + "Updating Event's chatlog");
+				String postUpdate = "";
+				Log.i(logTag, "This is Processed get 1: " + processedSMS);
+				if (processedSMS.contains("%N%")) {
+					Log.i(logTag, "%N% was found inside...");
+					// This means, the post is NOT mine, so do not from the
+					// sender, but on behalf of someone else... :D
+					postUpdate = processedSMS.replace("%N%", "");
+				} else {
+					Log.i(logTag, "%N% was NOT found inside...");
+					postUpdate += sender.name;
+					postUpdate += ": ";
+					postUpdate += processedSMS;
+					Log.i(logTag, " Post Created = " + postUpdate);
+				}
+
+				if (isnew) {
+					// event.invite(person); //Plan 2 right now... sending back
+					// to host, and host will spread the post.
+				}
+				event.updateChatLog("external", postUpdate, sender.name);
+
+				if (event.isMine) {
+					spreadPost(sender, processedSMS);
+				}
+
+				// Sending out Intent if Chatroom was active...
+				Intent broadcastIntent = new Intent();
+				broadcastIntent.setAction("SMS_RECEIVED_ACTION");
+				broadcastIntent.putExtra("smsFor" + event.title, postUpdate);
+				context.sendBroadcast(broadcastIntent);
+				out = true;
+			} else {
+				Log.i(logTag,
+						"Person not participating in event AND is not new");
 			}
-			Log.i(logTag, name + " is associated with this event: "
-					+ processedSMS.get(0) + "Updating Event's chatlog");
 
-			String postUpdate = "";
-
-			postUpdate += person.name;
-			postUpdate += ": ";
-			postUpdate += processedSMS.get(1);
-			Log.i(logTag, " Post Created = " + postUpdate);
-
-			ClassUniverse.universeEventLookUp.get(processedSMS.get(0))
-					.updateChatLog("external", postUpdate, person.name);
-			
-			if (event.isMine) {
-				spreadPost(person,processedSMS.get(1));
-			}
-			// Sending out Intent if Chatroom was active...
-			Intent broadcastIntent = new Intent();
-			broadcastIntent.setAction("SMS_RECEIVED_ACTION");
-			broadcastIntent
-					.putExtra("smsFor" + processedSMS.get(0), postUpdate);
-			context.sendBroadcast(broadcastIntent);
-			out = true;
+		} else {
+			Log.i(logTag, "Couldn't Resolve Event... Index out of range?");
 		}
 		return out;
+
 	}
 
 	private void notifyUser(String inEventTitle, String name, Context context) {
@@ -591,80 +533,77 @@ public class GCMIntentService extends GCMBaseIntentService {
 	private Void spreadPost(ClassPeople sender, String raw_sms_without_tags) {
 
 		Log.i(logTag, "Spread Post GCM!!!");
-		
-			Log.i(logTag,
-					"This was my event, I'm now spreading it... POST UPDATE: "
-							+ raw_sms_without_tags);
-			// 1. Person is appless
-			String post_content_appless = sender.name+": "+raw_sms_without_tags;
-			
-			// 2. Person has app.			
-			String post_content_sms = "%N%" + post_content_appless + " /-%"
-					+ event.title + "%-/";
-			
-			// 3. Person has gcm.
-			String post_content_gcm= raw_sms_without_tags + " /-%"
-					+ event.title + "%-/";
-			Log.i(logTag, "Post content app: " + post_content_sms);
 
-			if (ClassUniverse.GCMEnabled) {
-				Log.i(logTag, "Session has both wifi and GCMEnabled");
-				for (ClassPeople invitee : event.invited) {
-					if (invitee.phoneNumber.equals(sender.phoneNumber)) {
-						continue;
-					}
-					Log.i(logTag, "Invitee " + invitee.name + " hasApp: "
-							+ invitee.hasApp);
-					SmsManager sms = SmsManager.getDefault();
-					if (invitee.hasApp) {
-						if (invitee.hasGCM) {
-							new SendGCMCommand().execute(invitee.phoneNumber,
-									sender.phoneNumber, post_content_gcm,post_content_sms);
-							continue;
-						} else {
-							sms.sendTextMessage(invitee.phoneNumber, null,
-									post_content_sms, null, null);
-							Log.i(logTag, "Sent Sms to: " + invitee.name
-									+ " with tags, Content: "
-									+ post_content_sms);
-						}
+		Log.i(logTag,
+				"This was my event, I'm now spreading it... POST UPDATE: "
+						+ raw_sms_without_tags);
+		// 1. Person is appless
+		String post_content_appless = sender.name + ": " + raw_sms_without_tags;
 
-					} else {
-						sms.sendTextMessage(invitee.phoneNumber, null,
-								post_content_appless, null, null);
-						Log.i(logTag, "Sent Sms to: " + invitee.name
-								+ " with tags, Content: "
-								+ post_content_appless);
-					}
+		// 2. Person has app.
+		String post_content_sms = "%N%" + post_content_appless + " /-%"
+				+ event.eventHash + "%-/";
+
+		// 3. Person has gcm.
+		String post_content_gcm = raw_sms_without_tags + " /-%"
+				+ event.eventHash + "%-/";
+		Log.i(logTag, "Post content app: " + post_content_sms);
+
+		if (ClassUniverse.GCMEnabled) {
+			Log.i(logTag, "Session has both wifi and GCMEnabled");
+			for (ClassPeople invitee : event.invited) {
+				if (invitee.phoneNumber.equals(sender.phoneNumber)) {
+					continue;
 				}
-				return null;
-
-			} else {
-				Log.i(logTag, "No GCM enabled ... sending sms's");
-				for (ClassPeople invitee : event.invited) {
-					if (invitee.phoneNumber.equals(sender.phoneNumber)) {
+				Log.i(logTag, "Invitee " + invitee.name + " hasApp: "
+						+ invitee.hasApp);
+				SmsManager sms = SmsManager.getDefault();
+				if (invitee.hasApp) {
+					if (invitee.hasGCM) {
+						new SendGCMCommand().execute(invitee.phoneNumber,
+								sender.phoneNumber, post_content_gcm,
+								post_content_sms);
 						continue;
-					}
-					SmsManager sms = SmsManager.getDefault();
-					if (invitee.hasApp) {
-						Log.i(logTag, "Invitee " + invitee.name + " hasApp: "
-								+ invitee.hasApp);
+					} else {
 						sms.sendTextMessage(invitee.phoneNumber, null,
 								post_content_sms, null, null);
 						Log.i(logTag, "Sent Sms to: " + invitee.name
-								+ " with tags. content: " + post_content_sms);
-					} else {
-						sms.sendTextMessage(invitee.phoneNumber, null,
-								post_content_appless, null, null);
-						Log.i(logTag, "Sent Sms to: " + invitee.name
-								+ " without tags. Content: "
-								+ post_content_appless);
+								+ " with tags, Content: " + post_content_sms);
 					}
+
+				} else {
+					sms.sendTextMessage(invitee.phoneNumber, null,
+							post_content_appless, null, null);
+					Log.i(logTag, "Sent Sms to: " + invitee.name
+							+ " with tags, Content: " + post_content_appless);
 				}
 			}
 			return null;
+
+		} else {
+			Log.i(logTag, "No GCM enabled ... sending sms's");
+			for (ClassPeople invitee : event.invited) {
+				if (invitee.phoneNumber.equals(sender.phoneNumber)) {
+					continue;
+				}
+				SmsManager sms = SmsManager.getDefault();
+				if (invitee.hasApp) {
+					Log.i(logTag, "Invitee " + invitee.name + " hasApp: "
+							+ invitee.hasApp);
+					sms.sendTextMessage(invitee.phoneNumber, null,
+							post_content_sms, null, null);
+					Log.i(logTag, "Sent Sms to: " + invitee.name
+							+ " with tags. content: " + post_content_sms);
+				} else {
+					sms.sendTextMessage(invitee.phoneNumber, null,
+							post_content_appless, null, null);
+					Log.i(logTag, "Sent Sms to: " + invitee.name
+							+ " without tags. Content: " + post_content_appless);
+				}
+			}
 		}
-	
+		return null;
+	}
 
 	public class SendGCMCommand extends AsyncTask<String, Void, Integer> {
 
@@ -673,18 +612,16 @@ public class GCMIntentService extends GCMBaseIntentService {
 		String content_gcm = "";
 		String content_sms = "";
 
-		
 		@Override
 		protected Integer doInBackground(String... params) {
 			URL url;
 			TophoneNumber = params[0];
 			senderPhoneNumber = params[1];
 			content_gcm = params[2];
-			content_sms= params[3];
-			
+			content_sms = params[3];
 
 			String strUrl = "http://mj-server.mit.edu/instaplan/command/"
-					+ event.eventIdCode + "/?command=sendSmsTo"
+					+ event.serverIdCode + "/?command=sendSmsTo"
 					+ URLEncoder.encode(TophoneNumber) + "&content="
 					+ URLEncoder.encode(content_gcm) + "&hostDeviceId="
 					+ URLEncoder.encode(ClassUniverse.device_id)
@@ -720,20 +657,133 @@ public class GCMIntentService extends GCMBaseIntentService {
 				return ERROR_RESULT_CODE2;
 			}
 		}
+
 		@Override
 		protected void onPostExecute(Integer result) {
 			super.onPostExecute(result);
 			if (result == HttpURLConnection.HTTP_OK) {
-				Log.i(logTag, "Successfully sent GCM Message to: "
-						+ ClassUniverse.universePhoneNumberLookUp.get(senderPhoneNumber).name);
+				Log.i(logTag,
+						"Successfully sent GCM Message to: "
+								+ ClassUniverse.universePhoneNumberLookUp
+										.get(senderPhoneNumber).name);
 			} else {
-				Log.i(logTag, "Failed to send GCM Message to: " + ClassUniverse.universePhoneNumberLookUp.get(senderPhoneNumber).name);
-				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM=false;
+				Log.i(logTag,
+						"Failed to send GCM Message to: "
+								+ ClassUniverse.universePhoneNumberLookUp
+										.get(senderPhoneNumber).name);
+				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM = false;
 				SmsManager sms = SmsManager.getDefault();
-				sms.sendTextMessage(TophoneNumber, null, content_sms, null, null);
+				sms.sendTextMessage(TophoneNumber, null, content_sms, null,
+						null);
 			}
 		}
 
+	}
+
+	private ClassPeople giveMePerson(String phoneNumber, Context context,
+			String preferred_name) {
+
+		// //////////////////////////
+		String senderName = getContactDisplayNameByNumber(phoneNumber, context);
+		// //////////////////////////
+
+		// Try to get the person iff name is found.
+		if (senderName != null) {
+			// If person was in contacts & associated with our app
+			// (update his/her contact name)
+			if (ClassUniverse.universePhoneNumberLookUp
+					.containsKey(phoneNumber)) {
+				ClassUniverse.universePhoneNumberLookUp.get(phoneNumber).name = senderName;
+
+				// Person in contacts, but NOT associated with our app
+				// yet. Register person
+			} else {
+				isnew = true;
+				new ClassPeople(senderName, "phoneNumber", phoneNumber);
+			}
+		} else {
+			// If person not in contacts and NOT yet associated with our
+			// app: Register the person with preferred name
+			if (!ClassUniverse.universePhoneNumberLookUp
+					.containsKey(phoneNumber)) {
+
+				new ClassPeople(preferred_name + " -gcm", "phoneNumber",
+						phoneNumber);
+				isnew = true;
+			} else {
+				ClassUniverse.universePhoneNumberLookUp.get(phoneNumber).name = preferred_name
+						+ " -gcm";
+			}
+		}
+		ClassPeople sender = ClassUniverse.universePhoneNumberLookUp
+				.get(phoneNumber);
+		Log.i(logTag, "Give me Person outputs: " + sender.name);
+		return sender;
+
+	}
+
+	public String decodingComnandFromSms(ClassPeople person, String smsBody) {
+		/**
+		 * Takes a sender (ClassPeople), modifies sender.hasApp and .hasGCM
+		 * accordingly, Returns null if this sms was NOT associated with our
+		 * app, smsbody without tags otherwise.
+		 * 
+		 * @param smsBody
+		 *            raw sms body
+		 * @param person
+		 * @return null if this sms was NOT associated with our app, smsbody
+		 *         without tags otherwise.
+		 */
+		Pattern pattern = Pattern.compile("%E(\\d*)%");
+		Matcher matcher = pattern.matcher(smsBody);
+		if (matcher.find()) {
+			int index = Integer.parseInt(matcher.group(1));
+
+			Log.i(logTag, "A valid SMS Tag was found: " + matcher.group(1));
+			Log.i(logTag, "Setting person to APPLESS mode");
+			person.hasApp = false;
+			person.hasGCM = false; // not really... lol
+
+			if (ClassUniverse.universeAllMyEventCreationNumberLookUp.get(index) != null) {
+				// Event was found!
+				event = ClassUniverse.universeAllMyEventCreationNumberLookUp
+						.get(index);
+				Log.i(logTag, "Event found, from APPLESS PERSON : "
+						+ event.title);
+				return smsBody.replaceAll("%E" + matcher.group(1) + "%", "");
+			} else {
+				// Event was missed.
+				Log.i(logTag, "No event with creation Number: " + (index));
+				return null;
+			}
+		} else {
+			pattern = Pattern.compile("/-%(.*?)%-/");
+			matcher = pattern.matcher(smsBody);
+			if (matcher.find()) {
+				int hashReceived = Integer.parseInt(matcher.group(1));
+
+				person.hasApp = true;
+				person.hasGCM = true; // not really... lol
+
+				if (ClassUniverse.universeAllEventHashLookUp.get(hashReceived) != null) {
+					// Event Found!
+					event = ClassUniverse.universeAllEventHashLookUp
+							.get(hashReceived);
+					Log.i(logTag, "Valid event: " + event.title);
+					return smsBody.replaceAll("/-%" + matcher.group(1) + "%-/",
+							"");
+				} else {
+					// Event Missed!
+					Log.i(logTag, "INVALID EVENT: " + matcher.group(1));
+					return null;
+				}
+
+			} else {
+				Log.i(logTag, "This is a REGULAR SMS!!");
+				return null;
+			}
+
+		}
 	}
 
 }

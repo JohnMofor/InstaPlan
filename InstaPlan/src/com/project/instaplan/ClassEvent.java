@@ -13,17 +13,15 @@ public class ClassEvent {
 	int chatroom_size = 0;
 	int externalUpdateCount = 0;
 	int chatroomCursor = 0;
-	boolean isMine=false;
-	int eventCode = ClassUniverse.universeListOfAllEvents.size() + 1;
-	String eventIdCode;
+	int eventHash;
+	boolean isMine = false;
+	
 	ClassPeople host;
 	Boolean isFacebookEnabled = false;
 	HashMap<String, ClassPeople> invited_look_up = new HashMap<String, ClassPeople>();
 	HashMap<String, ClassPeople> attendee_look_up = new HashMap<String, ClassPeople>();
-
-	public static void main(String[] args) {
-
-	}
+	public int creationNumber = 0;
+	public String serverIdCode;
 
 	/**
 	 * @param Title
@@ -59,6 +57,7 @@ public class ClassEvent {
 
 	public void makeHost(ClassPeople new_person) {
 		this.host = new_person;
+		this.eventHash=(this.title+new_person.phoneNumber).hashCode();
 		if (!this.host.allEventsParticipating.contains(this)) {
 			this.host.allEventsParticipating.add(this);
 		}
@@ -66,7 +65,8 @@ public class ClassEvent {
 	}
 
 	public void invite(ClassPeople new_person) {
-		if ((!this.invited_look_up.containsKey(new_person.phoneNumber) && !new_person.phoneNumber.equals(ClassUniverse.mPhoneNumber))) {
+		if ((!this.invited_look_up.containsKey(new_person.phoneNumber) && !new_person.phoneNumber
+				.equals(ClassUniverse.mPhoneNumber))) {
 			this.invited.add(new_person);
 			this.invited_look_up.put(new_person.phoneNumber, new_person);
 			startListeningTo(new_person);
@@ -77,18 +77,17 @@ public class ClassEvent {
 	}
 
 	public void startListeningTo(ClassPeople new_person) {
-		if (new_person.hasEmail()) {
-			ClassUniverse.universeEmailLookUp.put(new_person.email, new_person);
-		}
-		if (new_person.hasFacebookID()) {
-			ClassUniverse.universeFacebookIDLookUp.put(new_person.facebookID,
-					new_person);
-		}
-		if (new_person.hasPhoneNumber()) {
-			ClassUniverse.universePhoneNumberLookUp.put(new_person.phoneNumber,
-					new_person);
-		}
-		ClassUniverse.universeNameLookUp.put(new_person.name, new_person);
+		// if (new_person.hasEmail()) {
+		// ClassUniverse.universeEmailLookUp.put(new_person.email, new_person);
+		// }
+		// if (new_person.hasFacebookID()) {
+		// ClassUniverse.universeFacebookIDLookUp.put(new_person.facebookID,
+		// new_person);
+		// }
+
+		ClassUniverse.universePhoneNumberLookUp.put(new_person.phoneNumber,
+				new_person);
+
 	}
 
 	public void enableFacebook(Boolean status) {
@@ -138,15 +137,19 @@ public class ClassEvent {
 	}
 
 	public void delete() {
-		ClassUniverse.universeEventLookUp.remove(this);
-		ClassUniverse.universeListOfAllEvents
-		.remove(this);
-		this.title= null; this.location= null; this.description= null; this.time= null; this.date = null;
+		ClassUniverse.universeAllEventHashLookUp
+				.put((this.title + this.host.phoneNumber).hashCode(),null);
+		ClassUniverse.universeListOfAllEvents.remove(this);
+		this.title = null;
+		this.location = null;
+		this.description = null;
+		this.time = null;
+		this.date = null;
 		this.attendees = null;
 		this.invited = null;
-		this.chat_log  = null;
-		this.messages  = null;
-		this.eventIdCode = null;
+		this.chat_log = null;
+		this.messages = null;
+		this.serverIdCode = null;
 		this.host = null;
 		this.isFacebookEnabled = null;
 		this.invited_look_up = null;

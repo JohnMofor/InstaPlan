@@ -34,7 +34,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	// Instantiate ALl Public Variables Here.
 	String logTag = "MJ(Create Event)------>";
 	String eventCode = null;
-	
+
 	TextView createEvent_eventTitle_textView;
 	TextView createEvent_eventTitle_editText;
 	TextView createEvent_eventTime_textView;
@@ -51,13 +51,14 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	Button createEvent_invite_facebook_friend_button;
 	Button createEvent_invite_non_local_contact_button;
 	Button createEvent_done_button, createEvent_toggle_gcm_button;
-	
+
 	final static int GetContactsResultCode = 100;
 	boolean sessionHasInternet = false;
 
 	ClassEvent createdEvent;
 
 	ArrayList<String> names = new ArrayList<String>();
+	ArrayList<String> phoneNumbers = new ArrayList<String>();
 	ArrayList<String> allInputss = new ArrayList<String>(5);
 	HashMap<String, String> allInputs = new HashMap<String, String>();
 	String[] allInputsOrder = { "Title", "Time", "Date", "Location",
@@ -89,20 +90,20 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			}
 			break;
 
-		case R.id.createEvent_invite_facebook_friend_button:
-			// Enter code for this button.
-			Log.i(logTag, "Invite_facebook_friend_button was pressed");
-			if (dataOk(false)) {
-				doFacebookFriendCode();
-			}
-			break;
-		case R.id.createEvent_invite_non_local_contact_button:
-			// Enter code for this button.
-			Log.i(logTag, "Invite_non_local_contact_button was pressed");
-			if (dataOk(false)) {
-				doNonLocalContactCode();
-			}
-			break;
+		// case R.id.createEvent_invite_facebook_friend_button:
+		// // Enter code for this button.
+		// Log.i(logTag, "Invite_facebook_friend_button was pressed");
+		// if (dataOk(false)) {
+		// doFacebookFriendCode();
+		// }
+		// break;
+		// case R.id.createEvent_invite_non_local_contact_button:
+		// // Enter code for this button.
+		// Log.i(logTag, "Invite_non_local_contact_button was pressed");
+		// if (dataOk(false)) {
+		// doNonLocalContactCode();
+		// }
+		// break;
 		case R.id.createEvent_done_button:
 			// Enter code for this button.
 			Log.i(logTag, "Done_button was pressed");
@@ -172,14 +173,16 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 
 		createEvent_toggle_gcm_button = (Button) findViewById(R.id.createEvent_toggle_gcm_button);
 		createEvent_invite_local_contact_button = (Button) findViewById(R.id.createEvent_invite_local_contact_button);
-		createEvent_invite_facebook_friend_button = (Button) findViewById(R.id.createEvent_invite_facebook_friend_button);
-		createEvent_invite_non_local_contact_button = (Button) findViewById(R.id.createEvent_invite_non_local_contact_button);
+		// createEvent_invite_facebook_friend_button = (Button)
+		// findViewById(R.id.createEvent_invite_facebook_friend_button);
+		// createEvent_invite_non_local_contact_button = (Button)
+		// findViewById(R.id.createEvent_invite_non_local_contact_button);
 		createEvent_done_button = (Button) findViewById(R.id.createEvent_done_button);
 		createEvent_facebookStatus_checkBox.bringToFront();
 	}
 
 	private Boolean dataOk(boolean done) {
-		// 
+		//
 		boolean ok = true;
 		allInputs.clear();
 		allInputs.put("Title", createEvent_eventTitle_editText.getText()
@@ -224,19 +227,21 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	}
 
 	private void doDoneCode() {
-		createTheEvent();
-		Log.i(logTag, "User entered a display name: " + ClassUniverse.mUserName);
-		if (names.size() > 0) {
-			for (String name : names) {
-				ClassPeople person = ClassUniverse.universeNameLookUp.get(name);
-				createdEvent.invite(person);
+		if (createTheEvent()) {
+			Log.i(logTag, "User entered a display name: "
+					+ ClassUniverse.mUserName);
+			if (phoneNumbers.size() > 0) {
+				for (String phoneNumber : phoneNumbers) {
+					createdEvent.invite(ClassUniverse.universePhoneNumberLookUp
+							.get(phoneNumber));
+				}
 			}
+			createdEvent.host = (new ClassPeople("Me", "phoneNumber",
+					ClassUniverse.mPhoneNumber));
+			String post = sendInitialSms();
+			new SpreadPosts().execute(post);
+			finish();
 		}
-		createdEvent.host = (new ClassPeople("Me", "phoneNumber",
-				ClassUniverse.mPhoneNumber));
-		String post = sendInitialSms();
-		new SpreadPosts().execute(post);
-		finish();
 	}
 
 	private String sendInitialSms() {
@@ -246,7 +251,8 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 		initialPost += ", Time: " + createdEvent.time;
 		initialPost += ", Date: " + createdEvent.date;
 		initialPost += ", Loc: " + createdEvent.location;
-		initialPost += ", PS: No InstaPlan? Add %E" + createdEvent.eventCode
+		initialPost += ", PS: No InstaPlan? Add %E"
+				+ Integer.toString(createdEvent.creationNumber)
 				+ "% in replies";
 		return initialPost;
 	}
@@ -258,7 +264,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			String initialPost = params[0];
 			if (gcmEnabled() && sessionHasInternet) {
 				Log.i(logTag, "Good. GCM is enabled on device");
-				createdEvent.eventIdCode = generateEventId(initialPost);
+				createdEvent.serverIdCode = generateEventId(initialPost);
 				for (ClassPeople invitee : createdEvent.invited) {
 					if ((invitee.hasGCM)
 							&& (sendGcmCommand(initialPost, invitee.phoneNumber) == HttpURLConnection.HTTP_OK)) {
@@ -329,12 +335,12 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			urlConnection.disconnect();
 			return generatedEventCode;
 		} catch (MalformedURLException e) {
-			//  
+			//
 			// e.printStackTrace();
 			Log.i(logTag, "ERROR SENDING GCM... MalFormedUrl");
 			return "Error";
 		} catch (IOException e) {
-			//  
+			//
 			// e.printStackTrace();
 			Log.i(logTag, "ERROR SENDING GCM... IOException..");
 			return "Error";
@@ -344,7 +350,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	public int sendGcmCommand(String content, String TophoneNumber) {
 		URL url;
 		String strUrl = "http://mj-server.mit.edu/instaplan/command/"
-				+ createdEvent.eventIdCode + "/?command=sendSmsTo"
+				+ createdEvent.serverIdCode + "/?command=sendSmsTo"
 				+ TophoneNumber + "&content=" + content + "&hostDeviceId="
 				+ ClassUniverse.device_id + "&sender_phoneNumber="
 				+ ClassUniverse.mPhoneNumber;
@@ -370,36 +376,42 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			}
 			return out;
 		} catch (MalformedURLException e) {
-			//  
+			//
 			// e.printStackTrace();
 			Log.i(logTag, "ERROR SENDING GCM... MalFormedUrl");
 			return ERROR_RESULT_CODE1;
 		} catch (IOException e) {
-			//  
+			//
 			// e.printStackTrace();
 			Log.i(logTag, "ERROR SENDING GCM... IOEX..");
 			return ERROR_RESULT_CODE2;
 		}
 	}
 
-	private void createTheEvent() {
-		//  
+	private boolean createTheEvent() {
+		//
 		createdEvent = new ClassEvent(allInputs.get("Title"),
 				allInputs.get("Location"), allInputs.get("Description"),
 				allInputs.get("Time"), allInputs.get("Date"));
-		ClassUniverse.createEvent(createdEvent);
-		createdEvent.isMine=true;
-	}
-
-	private void doNonLocalContactCode() {
-		//  
-
-	}
-
-	private void doFacebookFriendCode() {
-		//  
+		if (ClassUniverse.registerEvent(createdEvent)) {
+			createdEvent.isMine = true;
+			return true;
+		} else {
+			showMessage("ERROR: Event with title: " + allInputs.get("Title")
+					+ " already exists.");
+			return false;
+		}
 
 	}
+
+	// private void doNonLocalContactCode() {
+	// //
+	// }
+	//
+	// private void doFacebookFriendCode() {
+	// //
+	//
+	// }
 
 	private void doLocalContactCode() {
 		launchGetContacts = new Intent("com.project.instaplan2.GetContacts");
@@ -409,7 +421,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		//  
+		//
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.i(logTag, "Currently in On Activity Result");
 		Log.i(logTag, "REQ Code: " + requestCode + " RES Code: " + resultCode
@@ -417,6 +429,8 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 		if (resultCode == RESULT_OK) {
 			Bundle extras = data.getExtras();
 			names = (ArrayList<String>) extras.getStringArrayList("names");
+			phoneNumbers = (ArrayList<String>) extras
+					.getStringArrayList("phoneNumbers");
 			Log.i(logTag, "Now Printing names gotten!");
 			for (String test : names) {
 				Log.i(logTag, "Obtained Resolved: " + test);
@@ -428,7 +442,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 
 	@Override
 	protected void onPause() {
-		// 
+		//
 		super.onPause();
 	}
 
@@ -472,12 +486,12 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			}
 			return;
 		} catch (MalformedURLException e) {
-			//  
+			//
 			// e.printStackTrace();
 			Log.i(logTag, "ERROR SENDING GCM... MalFormedUrl");
 			return;
 		} catch (IOException e) {
-			//  
+			//
 			// e.printStackTrace();
 			Log.i(logTag, "ERROR SENDING GCM... IOEX..");
 			return;

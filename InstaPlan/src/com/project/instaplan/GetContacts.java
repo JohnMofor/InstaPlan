@@ -2,7 +2,6 @@ package com.project.instaplan;
 
 import java.util.ArrayList;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,9 +13,9 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+
 
 public class GetContacts extends Activity implements View.OnClickListener {
 	// Instantiate ALl Public Variables Here.
@@ -89,20 +88,16 @@ public class GetContacts extends Activity implements View.OnClickListener {
 				sortOrder);
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	
 	public void onClick(View viewClicked) {
 		switch (viewClicked.getId()) {
 		case R.id.getContacts_done_button:
 			Log.i(TAG, "Done Button pressed");
 			long[] ids = getContactsListView.getCheckedItemIds();
-			Log.i(TAG,
-					"Number of Items checked: "
-							+ Integer.toString(getContactsListView
-									.getCheckedItemCount()));
 
 			for (long id : ids) {
 				String current = Long.toString(id);
-				// Log.i(TAG, "Now processing retrieved ID: " + current);
+				Log.i(TAG, "Now processing retrieved ID: " + current);
 				Cursor contact = getContentResolver().query(
 						ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
 						null,
@@ -127,6 +122,8 @@ public class GetContacts extends Activity implements View.OnClickListener {
 						+ " & Phone: " + person.phoneNumber);
 			}
 			Log.i(TAG, "Now Creating Bundle");
+			bundleBackToCreateEvent.putStringArrayList("phoneNumbers",
+					contactPhonesString);
 			bundleBackToCreateEvent.putStringArrayList("names",
 					contactNamesString);
 			sendResultsBackToCreateEvent.putExtras(bundleBackToCreateEvent);
