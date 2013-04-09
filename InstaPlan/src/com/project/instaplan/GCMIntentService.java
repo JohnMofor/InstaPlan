@@ -99,7 +99,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			String phoneNumber = receivedMessage[0];
 			String preferred_name = receivedMessage[1];
 			String smsBody = receivedMessage[2];
-			
+
 			switch (getSmsType(smsBody)) {
 			case 0:
 				// Just Inbox
@@ -141,7 +141,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.i(logTag, "Updating GCM Inbox");
 		// Auto-generated method stub
 		int eventHash = ("Your GCM Inbox" + "00000000000").hashCode();
-		eventHash = (eventHash < 0 ? -eventHash:eventHash);
+		eventHash = (eventHash < 0 ? -eventHash : eventHash);
 		if (ClassUniverse.universeAllEventHashLookUp.get(eventHash) != null) {
 			Log.i(logTag, "This was not a new device, now saving to inbox");
 			ClassEvent event = ClassUniverse.universeAllEventHashLookUp
@@ -387,44 +387,35 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 		Log.i(logTag, "About to executeSmsCommand");
 		if (event != null) {
-			if (sender.isParticipatingIn(event) || isnew) {
-				Log.i(logTag, sender.name + " is associated with this event: "
-						+ processedSMS + "Updating Event's chatlog");
-				String postUpdate = "";
-				Log.i(logTag, "This is Processed get 1: " + processedSMS);
-				if (processedSMS.contains("%N%")) {
-					Log.i(logTag, "%N% was found inside...");
-					// This means, the post is NOT mine, so do not from the
-					// sender, but on behalf of someone else... :D
-					postUpdate = processedSMS.replace("%N%", "");
-				} else {
-					Log.i(logTag, "%N% was NOT found inside...");
-					postUpdate += sender.name;
-					postUpdate += ": ";
-					postUpdate += processedSMS;
-					Log.i(logTag, " Post Created = " + postUpdate);
-				}
+//			Log.i(logTag, sender.name + " is associated with this event: "
+//					+ processedSMS + "Updating Event's chatlog");
+			String postUpdate = "";
+			Log.i(logTag, "This is Processed get 1: " + processedSMS);
+			postUpdate += sender.name;
+			postUpdate += ": ";
+			postUpdate += processedSMS;
+			Log.i(logTag, " Post Created = " + postUpdate);
 
-				if (isnew) {
-					// event.invite(person); //Plan 2 right now... sending back
-					// to host, and host will spread the post.
-				}
-				event.updateChatLog("external", postUpdate, sender.name);
-
-				if (event.isMine) {
-					spreadPost(sender, processedSMS);
-				}
-
-				// Sending out Intent if Chatroom was active...
-				Intent broadcastIntent = new Intent();
-				broadcastIntent.setAction("SMS_RECEIVED_ACTION");
-				broadcastIntent.putExtra("smsFor" + event.title, postUpdate);
-				context.sendBroadcast(broadcastIntent);
-				out = true;
-			} else {
-				Log.i(logTag,
-						"Person not participating in event AND is not new");
+			if (isnew) {
+				// event.invite(person); //Plan 2 right now... sending back
+				// to host, and host will spread the post.
 			}
+			event.updateChatLog("external", postUpdate, sender.name);
+
+			if (event.isMine) {
+				spreadPost(sender, processedSMS);
+			}
+
+			// Sending out Intent if Chatroom was active...
+			Intent broadcastIntent = new Intent();
+			broadcastIntent.setAction("SMS_RECEIVED_ACTION");
+			broadcastIntent.putExtra("smsFor" + event.title, postUpdate);
+			context.sendBroadcast(broadcastIntent);
+			out = true;
+			// } else {
+			// Log.i(logTag,
+			// "Person not participating in event AND is not new");
+			// }
 
 		} else {
 			Log.i(logTag, "Couldn't Resolve Event... Index out of range?");
@@ -557,12 +548,17 @@ public class GCMIntentService extends GCMBaseIntentService {
 		// 3. Person has gcm.
 		String post_content_gcm = raw_sms_without_tags + " /-%"
 				+ event.eventHash + "%-/";
-		Log.i(logTag, "Post content app: " + post_content_sms);
+
+		Log.i(logTag, "Post content appless: " + post_content_appless);
+		Log.i(logTag, "Post content sms: " + post_content_sms);
+		Log.i(logTag, "Post content gcm: " + post_content_gcm);
 
 		if (ClassUniverse.GCMEnabled) {
 			Log.i(logTag, "Session has both wifi and GCMEnabled");
 			for (ClassPeople invitee : event.invited) {
 				if (invitee.phoneNumber.equals(sender.phoneNumber)) {
+					Log.i(TAG, "This was the sender (continuing ... lol) : "
+							+ invitee.name);
 					continue;
 				}
 				Log.i(logTag, "Invitee " + invitee.name + " hasApp: "
@@ -570,6 +566,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 				SmsManager sms = SmsManager.getDefault();
 				if (invitee.hasApp) {
 					if (invitee.hasGCM) {
+						Log.i(LOG_TAG, "Invitee has GCM !! and app");
 						new SendGCMCommand().execute(invitee.phoneNumber,
 								sender.phoneNumber, post_content_gcm,
 								post_content_sms);
@@ -624,11 +621,14 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 		@Override
 		protected Integer doInBackground(String... params) {
+
 			URL url;
 			TophoneNumber = params[0];
 			senderPhoneNumber = params[1];
 			content_gcm = params[2];
 			content_sms = params[3];
+			Log.i(logTag, "Attempting to send gcm message to invitee: "
+					+ TophoneNumber);
 
 			String strUrl = "http://mj-server.mit.edu/instaplan/command/"
 					+ event.serverIdCode + "/?command=sendSmsTo"
@@ -675,14 +675,15 @@ public class GCMIntentService extends GCMBaseIntentService {
 				Log.i(logTag,
 						"Successfully sent GCM Message to: "
 								+ ClassUniverse.universePhoneNumberLookUp
-										.get(senderPhoneNumber).name);
+										.get(TophoneNumber).name);
 				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM = true;
 			} else {
 				Log.i(logTag,
 						"Failed to send GCM Message to: "
 								+ ClassUniverse.universePhoneNumberLookUp
-										.get(senderPhoneNumber).name);
-//				ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM = false;
+										.get(TophoneNumber).name);
+				// ClassUniverse.universePhoneNumberLookUp.get(TophoneNumber).hasGCM
+				// = false;
 				SmsManager sms = SmsManager.getDefault();
 				sms.sendTextMessage(TophoneNumber, null, content_sms, null,
 						null);
@@ -748,7 +749,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 		Pattern pattern = Pattern.compile("/-%(.*?)%-/");
 		Matcher matcher = pattern.matcher(smsBody);
-		
+
 		if (matcher.find()) {
 			int hashReceived = Integer.parseInt(matcher.group(1));
 			hashReceived = (hashReceived < 0 ? -hashReceived : hashReceived);

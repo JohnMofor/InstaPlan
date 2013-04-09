@@ -3,7 +3,6 @@ package com.project.instaplan;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 public class ClassEvent {
 
 	String title, location, description, time, date;
@@ -11,19 +10,20 @@ public class ClassEvent {
 	ArrayList<ClassPeople> invited = new ArrayList<ClassPeople>();
 	ArrayList<String> chat_log = new ArrayList<String>();
 	ArrayList<Message> messages = new ArrayList<Message>();
+	ArrayList<ArrayList<String>> guestList = new ArrayList<ArrayList<String>>();
 	int chatroom_size = 0;
 	int externalUpdateCount = 0;
 	int chatroomCursor = 0;
 	int eventHash;
 	boolean isMine = false;
-	
+
 	ClassPeople host;
 	Boolean isFacebookEnabled = false;
+
 	HashMap<String, ClassPeople> invited_look_up = new HashMap<String, ClassPeople>();
 	HashMap<String, ClassPeople> attendee_look_up = new HashMap<String, ClassPeople>();
 	public int creationNumber = 0;
 	public String serverIdCode;
-	
 
 	/**
 	 * @param Title
@@ -59,8 +59,8 @@ public class ClassEvent {
 
 	public void makeHost(ClassPeople new_person) {
 		this.host = new_person;
-		this.eventHash=(this.title+new_person.phoneNumber).hashCode();
-		this.eventHash = (this.eventHash < 0 ? -this.eventHash:this.eventHash);
+		this.eventHash = (this.title + new_person.phoneNumber).hashCode();
+		this.eventHash = (this.eventHash < 0 ? -this.eventHash : this.eventHash);
 		if (!this.host.allEventsParticipating.contains(this)) {
 			this.host.allEventsParticipating.add(this);
 		}
@@ -140,8 +140,8 @@ public class ClassEvent {
 	}
 
 	public void delete() {
-		ClassUniverse.universeAllEventHashLookUp
-				.put((this.title + this.host.phoneNumber).hashCode(),null);
+		ClassUniverse.universeAllEventHashLookUp.put(
+				(this.title + this.host.phoneNumber).hashCode(), null);
 		ClassUniverse.universeListOfAllEvents.remove(this);
 		this.title = null;
 		this.location = null;
@@ -159,16 +159,21 @@ public class ClassEvent {
 		this.attendee_look_up = null;
 	}
 
-	public ArrayList<ArrayList<String>> getGuestList(){
-		ArrayList<String> name = new ArrayList<String>();
-		ArrayList<String> phoneNumber = new ArrayList<String>();
-		ArrayList<ArrayList<String>> out = new ArrayList<ArrayList<String>>();
-		for(ClassPeople invitee: this.invited){
-			name.add(invitee.name);
-			phoneNumber.add(invitee.phoneNumber);
+	public ArrayList<ArrayList<String>> getGuestList() {
+		if (this.guestList == null) {
+			ArrayList<String> name = new ArrayList<String>();
+			ArrayList<String> phoneNumber = new ArrayList<String>();
+			ArrayList<ArrayList<String>> out = new ArrayList<ArrayList<String>>();
+			for (ClassPeople invitee : this.invited) {
+				name.add(invitee.name);
+				phoneNumber.add(invitee.phoneNumber);
+			}
+			out.add(name);
+			out.add(phoneNumber);
+			this.guestList = out;
+			return out;
+		} else {
+			return this.guestList;
 		}
-		out.add(name);
-		out.add(phoneNumber);
-		return out;
 	}
 }

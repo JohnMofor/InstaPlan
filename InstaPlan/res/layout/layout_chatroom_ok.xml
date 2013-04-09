@@ -28,7 +28,7 @@
                     android:id="@+id/chatroom_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/listViewBg"
+                    android:background="@color/black"
                     android:orientation="vertical" >
 
                     <LinearLayout
@@ -109,7 +109,7 @@
                     android:orientation="vertical" >
 
                     <ListView
-                        android:id="@+id/guestList"
+                        android:id="@+id/create_event_guestList"
                         android:layout_width="fill_parent"
                         android:layout_height="match_parent"
                         android:textFilterEnabled="true" >

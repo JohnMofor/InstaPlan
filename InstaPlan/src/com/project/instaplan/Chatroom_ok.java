@@ -12,12 +12,15 @@ import com.google.android.gcm.GCMRegistrar;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TabHost.TabSpec;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,7 +44,8 @@ import android.provider.Settings.Secure;
 import android.telephony.SmsManager;
 import android.util.Log;
 
-public class Chatroom_ok extends ListActivity implements View.OnClickListener {
+public class Chatroom_ok extends ListActivity implements View.OnClickListener,
+		OnItemClickListener {
 
 	// Instantiate ALl Public Variables Here.
 	String logTag = "MJ------>";
@@ -74,7 +78,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 	int eventHash;
 	int ERROR_RESULT_CODE2 = 999;
 	final int SHOW_GUEST_LIST = 231;
-	final int EVENT_INFO=232;
+	final int EVENT_INFO = 232;
 	int ERROR_RESULT_CODE1 = 666;
 	int GCM_SERVER_RESPONSE_WAIT_TIME = 3000;
 	boolean sessionHasInternet = false;
@@ -93,7 +97,8 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 
 	// Guest List Variables
 	// ------------------------------------------------
-	ArrayList<ArrayList<String>> guestList;
+	ListView create_event_guestList;
+	ArrayAdapter<String> guestList_adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +112,13 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 		intentFilter.addAction("SMS_RECEIVED_ACTION");
 		Log.i(tag, "Done setting up filter");
 		getSessionInfo();
-		getGuestListInBackGround(event.serverIdCode);
 		// Give the rest of the functions.
 		// buttons.setOnclickListener(this);
 	}
 
 	private void getGuestListInBackGround(String serverIdCode) {
+		Log.i(tag, "This is the server code I will be trying to fetch: "
+				+ serverIdCode);
 		new GetGuestList().execute(serverIdCode);
 	}
 
@@ -120,6 +126,21 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 		initializeTab();
 		initializeChatroomVariables();
 		initializeSliderVariables();
+		// initializeGuestList();
+
+	}
+
+	private void initializeGuestList() {
+		Log.i(logTag, "Guest Room Initializing All Variables");
+		create_event_guestList = (ListView) findViewById(R.id.create_event_guestList);
+		guestList_adapter = new ArrayAdapter<String>(getApplicationContext(),
+				android.R.layout.simple_list_item_1, 0);
+		for (String name : event.guestList.get(0)) {
+			guestList_adapter.add(name);
+			guestList_adapter.notifyDataSetChanged();
+		}
+		create_event_guestList.setAdapter(guestList_adapter);
+		create_event_guestList.setOnItemClickListener(this);
 
 	}
 
@@ -203,7 +224,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 				showMessage("No Guests");
 			}
 		} else {
-			if (guestList == null) {
+			if (event.guestList == null) {
 				showMessage("ERROR: Could not retrieve guest list.");
 			} else {
 				showDialog(SHOW_GUEST_LIST);
@@ -212,11 +233,10 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 
 	}
 
-	
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		// TODO Auto-generated method stub
-		switch(id){
+
+		switch (id) {
 		case SHOW_GUEST_LIST:
 			Log.i(tag, "Now going to show alert");
 			AlertDialog guestList_dialog = showAlertBox();
@@ -226,28 +246,26 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 			eventInfoDialog.setContentView(R.layout.layout_show_event_info);
 			eventInfoDialog.setTitle(event.time + " Event Info");
 			populateDialog();
-			return eventInfoDialog;			
+			return eventInfoDialog;
 		}
 		return super.onCreateDialog(id);
 	}
 
 	public AlertDialog showAlertBox() {
-		final ArrayList<ArrayList<String>> guestList1 = (event.isMine ? event
-				.getGuestList() : guestList);
-		AlertDialog.Builder builder = new AlertDialog.Builder(
-				this);
+		final ArrayList<ArrayList<String>> guestList1 = event.guestList;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		Log.i(tag, "About to set up charseq");
-		Log.i(tag,"guestList: ");
-		for(ArrayList<String> ar:guestList1){
-			Log.i(tag,"Array XXXXXXXXXXXX");
-			for(String pr: ar){
-				Log.i(tag,pr);
+		Log.i(tag, "guestList: ");
+		for (ArrayList<String> ar : guestList1) {
+			Log.i(tag, "Array XXXXXXXXXXXX");
+			for (String pr : ar) {
+				Log.i(tag, pr);
 			}
 		}
 		CharSequence[] charSeq = guestList1.get(0).toArray(
 				new CharSequence[guestList1.get(0).size()]);
-		for(CharSequence str: charSeq){
-			Log.i(tag,"Char found: "+str);
+		for (CharSequence str : charSeq) {
+			Log.i(tag, "Char found: " + str);
 		}
 		builder.setTitle(event.title + " Guest List");
 		builder.setItems(charSeq, new DialogInterface.OnClickListener() {
@@ -490,6 +508,9 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 			if (!result.equals("Error")) {
 				event.serverIdCode = result;
 				Log.i(tag, "EventIdCode: " + result);
+				if (!event.isMine) {
+					getGuestListInBackGround(event.serverIdCode);
+				}
 			}
 			Log.i(tag, "Just set Event's ID code :) " + result);
 		}
@@ -659,8 +680,10 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 		finish();
 	}
 
-	private ArrayList<ArrayList<String>> getGuestList(String serverIdCode) {
+	private ArrayList<ArrayList<String>> getExternalGuestList(
+			String serverIdCode) {
 		URL url;
+		Log.i(tag, "in get Guest List... server Id code: " + serverIdCode);
 		ArrayList<String> names = new ArrayList<String>();
 		ArrayList<String> phoneNumbers = new ArrayList<String>();
 		String strUrl = "http://mj-server.mit.edu/instaplan/command/"
@@ -677,21 +700,27 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 			urlConnection.connect();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					urlConnection.getInputStream()));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				if (line.contains("%--%")) {
-					String[] parts = line.split("%--%");
-					phoneNumbers.add(parts[1]);
-					String displayName = getContactDisplayNameByNumber(
-							parts[1], getApplicationContext());
-					if (displayName != null) {
-						names.add(displayName);
-					} else {
-						names.add(parts[0] + " -host contact");
+			String responseLine;
+			responseLine = reader.readLine();
+			Log.i(tag, "THis is the response line?: " + responseLine);
+			reader.close();
+			if (responseLine.contains("<br>")) {
+				String[] lines = responseLine.split("<br>");
+				for (String line : lines) {
+					if (line.contains("%--%")) {
+						String[] parts = line.split("%--%");
+						phoneNumbers.add(parts[1]);
+						String displayName = getContactDisplayNameByNumber(
+								parts[1], getApplicationContext());
+						if (displayName != null) {
+							names.add(displayName);
+						} else {
+							names.add(parts[0] + " -host contact");
+						}
 					}
 				}
 			}
-			reader.close();
+
 			urlConnection.disconnect();
 			ArrayList<ArrayList<String>> out = new ArrayList<ArrayList<String>>();
 			out.add(names);
@@ -699,12 +728,12 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 			return out;
 		} catch (MalformedURLException e) {
 			//
-//			e.printStackTrace();
+			// e.printStackTrace();
 			Log.i(logTag, "ERROR RETRIEVING GUESTLIST");
 			return null;
 		} catch (IOException e) {
 			//
-//			e.printStackTrace();
+			// e.printStackTrace();
 			Log.i(logTag, "ERROR RETRIEVING GUESTLIST2");
 			return null;
 		}
@@ -742,9 +771,25 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 
 		@Override
 		protected Void doInBackground(String... params) {
-			guestList = getGuestList(params[0]);
+			Log.i(logTag, "(BAKGROUND) I'm in the guest List!!!! params: "
+					+ params[0]);
+			event.guestList = getExternalGuestList(params[0]);
+			initializeGuestList();
+			Log.i(logTag, "Now we can set up guest list");
 			return null;
 		}
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
+		Log.i(tag,
+				event.guestList.get(0).get(index)
+						+ " was clicked, Phone Number: "
+						+ event.guestList.get(1).get(index));
+		showMessage(event.guestList.get(0).get(index)
+				+ " was clicked, Phone Number: "
+				+ event.guestList.get(1).get(index));
 
 	}
 
