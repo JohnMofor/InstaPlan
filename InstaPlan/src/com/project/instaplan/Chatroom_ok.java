@@ -188,8 +188,10 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener {
 			break;
 		case R.id.chatroom_ok_showEventInfo_button:
 			do_show_eventInfo();
+			break;
 		case R.id.chatroom_ok_showEventGuestList_button:
 			do_show_guestList();
+			break;
 		}
 	}
 
