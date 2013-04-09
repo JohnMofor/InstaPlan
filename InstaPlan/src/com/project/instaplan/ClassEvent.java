@@ -3,6 +3,7 @@ package com.project.instaplan;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 public class ClassEvent {
 
 	String title, location, description, time, date;
@@ -22,6 +23,7 @@ public class ClassEvent {
 	HashMap<String, ClassPeople> attendee_look_up = new HashMap<String, ClassPeople>();
 	public int creationNumber = 0;
 	public String serverIdCode;
+	
 
 	/**
 	 * @param Title
@@ -155,5 +157,18 @@ public class ClassEvent {
 		this.isFacebookEnabled = null;
 		this.invited_look_up = null;
 		this.attendee_look_up = null;
+	}
+
+	public ArrayList<ArrayList<String>> getGuestList(){
+		ArrayList<String> name = new ArrayList<String>();
+		ArrayList<String> phoneNumber = new ArrayList<String>();
+		ArrayList<ArrayList<String>> out = new ArrayList<ArrayList<String>>();
+		for(ClassPeople invitee: this.invited){
+			name.add(invitee.name);
+			phoneNumber.add(invitee.phoneNumber);
+		}
+		out.add(name);
+		out.add(phoneNumber);
+		return out;
 	}
 }

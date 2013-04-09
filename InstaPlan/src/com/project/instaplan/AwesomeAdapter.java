@@ -76,7 +76,7 @@ public class AwesomeAdapter extends BaseAdapter{
 			}
 			holder.message.setLayoutParams(lp);
 //			holder.message.setTextColor(R.color.textColor);
-			holder.message.setTextColor(Color.parseColor("#FFFFFF"));	
+			holder.message.setTextColor(Color.parseColor("#FFFFFF"));
 		}
 		return convertView;
 	}

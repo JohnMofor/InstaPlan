@@ -14,7 +14,7 @@ public class Menu extends ListActivity {
 	// "GoogleMaps", "LocationActivity", "Downloader", "MessageActivity",
 	// "GCMActivity", "PhoneRegistration", "Task 14", "Task 15" };
 	String classes[] = { "AllEvents","PhoneRegistration", "CreateEvent","Chatroom", 
-			"RuntimeStatusCheck"  };
+			"RuntimeStatusCheck","Slider" ,"Chatroom_ok" };
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {

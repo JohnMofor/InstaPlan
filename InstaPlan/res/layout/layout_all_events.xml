@@ -29,13 +29,13 @@
             android:layout_weight="50"
             android:text="@string/allEvents_createNew_button" />
 
-        <Button
-            android:id="@+id/allEvents_deleteMultiple_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="50"
-            android:text="@string/allEvents_deleteMultiple_button" />
+<!--         <Button -->
+<!--             android:id="@+id/allEvents_deleteMultiple_button" -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_gravity="center_horizontal" -->
+<!--             android:layout_weight="50" -->
+<!--             android:text="@string/allEvents_deleteMultiple_button" /> -->
     </LinearLayout>
 
 </LinearLayout>

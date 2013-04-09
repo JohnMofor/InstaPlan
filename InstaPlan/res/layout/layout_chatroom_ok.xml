@@ -25,9 +25,8 @@
                 android:layout_height="match_parent" >
 
                 <RelativeLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="wrap_content"
                     android:id="@+id/chatroom_tab"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/listViewBg"
                     android:orientation="vertical" >
@@ -48,7 +47,9 @@
                             android:background="@drawable/message_field"
                             android:hint="@string/chatroom_hint"
                             android:padding="5sp"
+                            android:scrollHorizontally="true"
                             android:textColor="@color/textFieldColor" />
+
                         <!-- android:id="@+id/text" -->
 
                         <Button
@@ -92,24 +93,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical" >
-
-                    <Button
-                        android:id="@+id/startWatch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="start Watch" />
-
-                    <Button
-                        android:id="@+id/stopWatch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="stop Watch" />
-
-                    <TextView
-                        android:id="@+id/textView1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TextView1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -117,12 +100,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TextView2" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -131,24 +108,63 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical" >
 
-                    <Button
-                        android:id="@+id/bAddTab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Event guest list..." />
+                    <ListView
+                        android:id="@+id/guestList"
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:textFilterEnabled="true" >
+                    </ListView>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/settings_tab"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                    android:id="@+id/slider_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
 
-                    <Button
-                        android:id="@+id/bbAddTab"
+                    <com.project.instaplan2.TransparentPanel
+                        android:id="@+id/popup_window"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Settings" />
+                        android:background="#ffffff"
+                        android:gravity="left"
+                        android:orientation="vertical"
+                        android:padding="1px" >
+
+                        <Button
+                            android:id="@+id/chatroom_ok_showEventInfo_button"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/roundbutton"
+                            android:padding="6dp"
+                            android:text="Event Info"
+                            android:textColor="#FFFFFF" />
+
+                        <Button
+                            android:id="@+id/chatroom_ok_showEventGuestList_button"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/roundbutton"
+                            android:padding="6dp"
+                            android:text="Event Guest List"
+                            android:textColor="#FFFFFF" />
+
+                        <Button
+                            android:id="@+id/chatroom_ok_showEventSettings_button"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/roundbutton"
+                            android:padding="6dp"
+                            android:text="Event Settings"
+                            android:textColor="#FFFFFF" />
+                    </com.project.instaplan2.TransparentPanel>
+
+                    <Button
+                        android:id="@+id/chatroom_ok_slider_popout_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rightarrow" />
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>

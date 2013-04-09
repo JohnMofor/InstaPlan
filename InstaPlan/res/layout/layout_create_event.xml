@@ -37,33 +37,44 @@
                 android:hint="@string/createEvent_titleHint" >
             </EditText>
 
-            <TextView
-                android:id="@+id/createEvent_eventTime_textView"
+            <TableLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/createEvent_eventTime" />
+                android:layout_height="wrap_content" >
 
-            <EditText
-                android:id="@+id/createEvent_eventTime_editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/createEvent_timeHint"
-                android:inputType="time" />
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/createEvent_eventDate_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/createEvent_eventDate" />
+                    <TextView
+                        android:id="@+id/createEvent_eventDate_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/createEvent_eventDate" />
 
-            <EditText
-                android:id="@+id/createEvent_eventDate_editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/createEvent_dateHint"
-                android:inputType="date" />
+                    <Button
+                        android:id="@+id/createEvent_eventDate_datePicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Set Date" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/createEvent_eventTime_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/createEvent_eventTime" />
+
+                    <Button
+                        android:id="@+id/createEvent_eventTime_timePicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Set Time" />
+                </TableRow>
+            </TableLayout>
 
             <TextView
                 android:id="@+id/createEvent_eventLocation_textView"
@@ -77,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/createEvent_locationHint"
-                android:inputType="textPostalAddress" />
+                android:inputType="textMultiLine" />
 
             <TextView
                 android:id="@+id/createEvent_eventDescription_textView"
@@ -101,35 +112,37 @@
 
             <Button
                 android:id="@+id/createEvent_toggle_gcm_button"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:text="@string/createEvent_toggle_gcm_button" />
 
             <Button
                 android:id="@+id/createEvent_invite_local_contact_button"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:text="@string/createEvent_invite_local_contact_button" />
 
-<!--             <Button -->
-<!--                 android:id="@+id/createEvent_invite_facebook_friend_button" -->
-<!--                 android:layout_width="match_parent" -->
-<!--                 android:layout_height="wrap_content" -->
-<!--                 android:text="@string/createEvent_invite_facebook_friend_button" /> -->
+            <Button
+                android:id="@+id/createEvent_done_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/createEvent_done_button" />
 
-<!--             <Button -->
-<!--                 android:id="@+id/createEvent_invite_non_local_contact_button" -->
-<!--                 android:layout_width="match_parent" -->
-<!--                 android:layout_height="wrap_content" -->
-<!--                 android:text="@string/createEvent_invite_non_local_contact_button" /> -->
+            <!-- <Button -->
+            <!-- android:id="@+id/createEvent_invite_facebook_friend_button" -->
+            <!-- android:layout_width="match_parent" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:text="@string/createEvent_invite_facebook_friend_button" /> -->
+
+
+            <!-- <Button -->
+            <!-- android:id="@+id/createEvent_invite_non_local_contact_button" -->
+            <!-- android:layout_width="match_parent" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:text="@string/createEvent_invite_non_local_contact_button" /> -->
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/createEvent_done_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="5"
-        android:text="@string/createEvent_done_button" />
 
 </LinearLayout>

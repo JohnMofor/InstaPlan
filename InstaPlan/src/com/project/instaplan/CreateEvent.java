@@ -7,19 +7,30 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-
+import java.util.Locale;
 import com.google.android.gcm.GCMRegistrar;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -27,8 +38,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.telephony.SmsManager;
+import android.text.format.Time;
 import android.util.Log;
 
+@SuppressLint("SimpleDateFormat")
 public class CreateEvent extends Activity implements View.OnClickListener {
 
 	// Instantiate ALl Public Variables Here.
@@ -38,25 +51,27 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	TextView createEvent_eventTitle_textView;
 	TextView createEvent_eventTitle_editText;
 	TextView createEvent_eventTime_textView;
-	TextView createEvent_eventTime_editText;
+
 	TextView createEvent_eventDate_textView;
-	TextView createEvent_eventDate_editText;
+
 	TextView createEvent_eventLocation_textView;
 	TextView createEvent_eventLocation_editText;
 	TextView createEvent_eventDescription_textView;
 	TextView createEvent_eventDescription_editText;
 	CheckBox createEvent_facebookStatus_checkBox;
 	CheckBox createEvent_enable_gcm_checkBox;
+
 	Button createEvent_invite_local_contact_button;
-//	Button createEvent_invite_facebook_friend_button;
-//	Button createEvent_invite_non_local_contact_button;
+	Button createEvent_eventDate_datePicker;
+	Button createEvent_eventTime_timePicker;
+	// Button createEvent_invite_facebook_friend_button;
+	// Button createEvent_invite_non_local_contact_button;
 	Button createEvent_done_button, createEvent_toggle_gcm_button;
 
 	final static int GetContactsResultCode = 100;
 	boolean sessionHasInternet = false;
 
 	ClassEvent createdEvent;
-	
 
 	ArrayList<String> names = new ArrayList<String>();
 	ArrayList<String> phoneNumbers = new ArrayList<String>();
@@ -67,8 +82,19 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	ArrayList<TextView> allTextViews = new ArrayList<TextView>(5);
 	Intent launchGetContacts;
 	final static int contactData = 0;
+	final String[] DAYS = { "Monday", "Tuesday", "Wednesday", "Thursday",
+			"Friday", "Saturday", "Sunday" };
+	static String MONTHS[] = { "January", "February", "March", "April", "May",
+			"June", "July", "August", "September", "October", "November",
+			"December" };
+	
+	String inviteeString="";
 	int ERROR_RESULT_CODE2 = 999;
 	int ERROR_RESULT_CODE1 = 666;
+	final int DATE_DIALOG = 123;
+	final int TIME_DIALOG = 321;
+	final int GUEST_LIST = 111;
+	int year, month, day, hour, minute, seconds;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,13 +141,48 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 
 		case R.id.createEvent_toggle_gcm_button:
 			startActivity(new Intent("com.project.instaplan2.PhoneRegistration"));
+			break;
+
+		case R.id.createEvent_eventDate_datePicker:
+			showDialog(DATE_DIALOG);
+			break;
+		case R.id.createEvent_eventTime_timePicker:
+			showDialog(TIME_DIALOG);
+			break;
+			
+		
 		}
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case DATE_DIALOG:
+			final Time c = new Time();
+			c.setToNow();
+			year = c.year;
+			month = c.month;
+			day = c.monthDay;
+			return new DatePickerDialog(this, datePickerListener, year, month,
+					day);
+
+		case TIME_DIALOG:
+			final Time now = new Time();
+			now.setToNow();
+			hour = now.hour;
+			minute = now.minute;
+			return new TimePickerDialog(this, timePickerListener, hour, minute,
+					true);
+		}
+		return super.onCreateDialog(id);
 	}
 
 	private void setClickListeners() {
 		createEvent_invite_local_contact_button.setOnClickListener(this);
-//		createEvent_invite_facebook_friend_button.setOnClickListener(this);
-//		createEvent_invite_non_local_contact_button.setOnClickListener(this);
+		createEvent_eventDate_datePicker.setOnClickListener(this);
+		createEvent_eventTime_timePicker.setOnClickListener(this);
+		// createEvent_invite_facebook_friend_button.setOnClickListener(this);
+		// createEvent_invite_non_local_contact_button.setOnClickListener(this);
 		createEvent_done_button.setOnClickListener(this);
 		createEvent_toggle_gcm_button.setOnClickListener(this);
 	}
@@ -157,10 +218,12 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 		Log.i(logTag, "CreateEvent.java Initializing All Variables");
 		createEvent_eventTitle_textView = (TextView) findViewById(R.id.createEvent_eventTitle_textView);
 		createEvent_eventTitle_editText = (TextView) findViewById(R.id.createEvent_eventTitle_editText);
+		createEvent_eventDate_datePicker = (Button) findViewById(R.id.createEvent_eventDate_datePicker);
+		createEvent_eventTime_timePicker = (Button) findViewById(R.id.createEvent_eventTime_timePicker);
 		createEvent_eventTime_textView = (TextView) findViewById(R.id.createEvent_eventTime_textView);
-		createEvent_eventTime_editText = (TextView) findViewById(R.id.createEvent_eventTime_editText);
+
 		createEvent_eventDate_textView = (TextView) findViewById(R.id.createEvent_eventDate_textView);
-		createEvent_eventDate_editText = (TextView) findViewById(R.id.createEvent_eventDate_editText);
+
 		createEvent_eventLocation_textView = (TextView) findViewById(R.id.createEvent_eventLocation_textView);
 		createEvent_eventLocation_editText = (TextView) findViewById(R.id.createEvent_eventLocation_editText);
 		createEvent_eventDescription_textView = (TextView) findViewById(R.id.createEvent_eventDescription_textView);
@@ -188,9 +251,9 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 		allInputs.clear();
 		allInputs.put("Title", createEvent_eventTitle_editText.getText()
 				.toString());
-		allInputs.put("Time", createEvent_eventTime_editText.getText()
+		allInputs.put("Time", createEvent_eventTime_timePicker.getText()
 				.toString());
-		allInputs.put("Date", createEvent_eventDate_editText.getText()
+		allInputs.put("Date", createEvent_eventDate_datePicker.getText()
 				.toString());
 		allInputs.put("Location", createEvent_eventLocation_editText.getText()
 				.toString());
@@ -208,19 +271,29 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 				allTextViews.get(i).setTextColor(Color.WHITE);
 			}
 		}
+		if (createEvent_eventTime_timePicker.getText().toString()
+				.equals("Set Time")) {
+			createEvent_eventTime_textView.setTextColor(Color.RED);
+			ok = false;
+		}
+		if (createEvent_eventDate_datePicker.getText().toString()
+				.equals("Set Date")) {
+			createEvent_eventDate_textView.setTextColor(Color.RED);
+			ok = false;
+		}
 		if (!ok) {
 			Toast.makeText(getApplicationContext(),
 					"Please Fill All Fields In Red", Toast.LENGTH_SHORT).show();
 			return false;
 		} else {
 			if (done) {
-//				Toast.makeText(getApplicationContext(),
-//						allInputs.get("Title") + " Created", Toast.LENGTH_SHORT)
-//						.show();
+				// Toast.makeText(getApplicationContext(),
+				// allInputs.get("Title") + " Created", Toast.LENGTH_SHORT)
+				// .show();
 				return true;
 			} else {
-//				Toast.makeText(getApplicationContext(), "Select Contacts",
-//						Toast.LENGTH_SHORT).show();
+				// Toast.makeText(getApplicationContext(), "Select Contacts",
+				// Toast.LENGTH_SHORT).show();
 				return true;
 			}
 		}
@@ -268,6 +341,9 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			String initialPost = params[0];
 			if (gcmEnabled() && sessionHasInternet) {
 				Log.i(logTag, "Good. GCM is enabled on device");
+				for (ClassPeople invitee: createdEvent.invited){
+					inviteeString+=invitee.name+"%--%"+invitee.phoneNumber+"<br>";
+				}
 				createdEvent.serverIdCode = generateEventId(initialPost);
 				for (ClassPeople invitee : createdEvent.invited) {
 					if ((invitee.hasGCM)
@@ -320,7 +396,9 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 		String strUrl = "http://mj-server.mit.edu/instaplan/registerEvent/?parameters="
 				+ URLEncoder.encode(initialPost)
 				+ "&hostDeviceId="
-				+ ClassUniverse.device_id;
+				+ ClassUniverse.device_id
+				+"&invitees="
+				+ URLEncoder.encode(inviteeString);
 		try {
 			// String myUrl = URLEncoder.encode(strUrl, "UTF-8");
 			// url = new URL(myUrl);
@@ -397,7 +475,9 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 		createdEvent = new ClassEvent(allInputs.get("Title"),
 				allInputs.get("Location"), allInputs.get("Description"),
 				allInputs.get("Time"), allInputs.get("Date"));
-		createdEvent.makeHost(new ClassPeople(ClassUniverse.mUserName, "phoneNumber",ClassUniverse.mPhoneNumber));
+		createdEvent.isFacebookEnabled=createEvent_facebookStatus_checkBox.isChecked();
+		createdEvent.makeHost(new ClassPeople(ClassUniverse.mUserName,
+				"phoneNumber", ClassUniverse.mPhoneNumber));
 		createdEvent.isMine = true;
 		if (ClassUniverse.registerEvent(createdEvent)) {
 			return true;
@@ -509,5 +589,56 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 				Toast.LENGTH_LONG);
 		myToast.show();
 	}
+
+	private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+
+		// when dialog box is closed, below method will be called.
+
+		@SuppressLint("SimpleDateFormat")
+		@Override
+		public void onDateSet(DatePicker view, int selectedYear,
+				int selectedMonth, int selectedDay) {
+
+			year = selectedYear;
+			month = selectedMonth;
+			day = selectedDay;
+			String input_date = day-2+"/"+month+1+"/"+year;
+			SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy",Locale.US);
+			Date dt1;
+			try {
+				dt1 = format1.parse(input_date);
+				DateFormat format2 = new SimpleDateFormat("EEEE");
+				String literal_day = format2.format(dt1);
+				String surfix = "th";
+				if(day%10==1){
+					surfix = "st";
+				}else if(day%10==2){
+					surfix="nd";
+				}else if(day%10==3){
+					surfix="rd";
+				}
+				String out = literal_day+", "+day+surfix+" "+MONTHS[month]+" "+year;
+				createEvent_eventDate_datePicker.setText(out);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				createEvent_eventDate_datePicker.setText(month+1+"-"+day+"-"+year);
+			}			
+
+		}
+	};
+
+	private OnTimeSetListener timePickerListener = new OnTimeSetListener() {
+
+		@Override
+		public void onTimeSet(TimePicker arg0, int hourSelected,
+				int minuteSelected) {
+			// TODO Auto-generated method stub
+			hour = hourSelected;
+			minute = minuteSelected;
+			createEvent_eventTime_timePicker.setText(new StringBuilder()
+					.append(hour).append(": ").append(minute));
+		}
+	};
 
 }

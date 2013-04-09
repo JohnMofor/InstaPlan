@@ -17,8 +17,8 @@ public class AllEvents extends Activity implements View.OnClickListener,
 		OnItemClickListener, OnItemLongClickListener {
 
 	// Instantiate ALl Public Variables Here.
-	String logTag = "MJ------>";
-	Button allEvents_createNew_button, allEvents_deleteMultiple_button;
+	String logTag = "MJ(All events)------>";
+	Button allEvents_createNew_button;
 	ListView allEvents_listView;
 	public static final int uniqueID = 1234567856;
 	NotificationManager nm;
@@ -43,7 +43,6 @@ public class AllEvents extends Activity implements View.OnClickListener,
 		// Give the rest of the functions.
 		// TODO
 		allEvents_createNew_button.setOnClickListener(this);
-		allEvents_deleteMultiple_button.setOnClickListener(this);
 		allEvents_listView.setOnItemClickListener(this);
 		allEvents_listView.setOnItemLongClickListener(this);
 	}
@@ -56,9 +55,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 
 	private void initializeAllVariables() {
 		Log.i(logTag, "AllEvents.java Initializing All Variables");
-		// TODO
 		allEvents_createNew_button = (Button) findViewById(R.id.allEvents_createNew_button);
-		allEvents_deleteMultiple_button = (Button) findViewById(R.id.allEvents_deleteMultiple_button);
 		allEvents_listView = (ListView) findViewById(R.id.allEvents_listView);
 		adapter = new ArrayAdapter<String>(getApplicationContext(),
 				android.R.layout.simple_list_item_1, 0);
@@ -75,7 +72,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 		Log.i(logTag, "List item Clicked" + position);
 		ClassEvent clicked_event = ClassUniverse.universeListOfAllEvents
 				.get(position);
-		Intent sendToChatRoom = new Intent("com.project.instaplan2.Chatroom");
+		Intent sendToChatRoom = new Intent("com.project.instaplan2.Chatroom_ok");
 		Log.i(logTag, "Putting Title Extra: " + clicked_event.title);
 		sendToChatRoom.putExtra("Title", clicked_event.title);
 		sendToChatRoom.putExtra("hostPhoneNumber", clicked_event.host.phoneNumber);
@@ -94,9 +91,6 @@ public class AllEvents extends Activity implements View.OnClickListener,
 			break;
 
 		// ADD MORE button CASESE:
-		case R.id.allEvents_deleteMultiple_button:
-			Log.i(logTag, "Delete Multiple Button was pressed");
-			break;
 		}
 	}
 
