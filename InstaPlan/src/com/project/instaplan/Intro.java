@@ -25,7 +25,7 @@ public class Intro extends Activity{
 				}catch(InterruptedException error){
 					error.printStackTrace();
 				}finally{
-					Intent showMenu = new Intent("com.project.instaplan2.Menu");
+					Intent showMenu = new Intent("com.project.instaplan2.AllEvents");
 					startActivity(showMenu);
 				}
 			}

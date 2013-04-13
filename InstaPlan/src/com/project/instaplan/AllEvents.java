@@ -107,12 +107,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 		}
 	}
 
-	@Override
-	protected void onPause() {
-		// TODO
-		super.onPause();
-		finish();
-	}
+	
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position,

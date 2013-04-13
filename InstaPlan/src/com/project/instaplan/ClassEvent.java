@@ -160,7 +160,7 @@ public class ClassEvent {
 	}
 
 	public ArrayList<ArrayList<String>> getGuestList() {
-		if (this.guestList == null) {
+		if (this.invited != null) {
 			ArrayList<String> name = new ArrayList<String>();
 			ArrayList<String> phoneNumber = new ArrayList<String>();
 			ArrayList<ArrayList<String>> out = new ArrayList<ArrayList<String>>();
@@ -171,9 +171,9 @@ public class ClassEvent {
 			out.add(name);
 			out.add(phoneNumber);
 			this.guestList = out;
-			return out;
-		} else {
 			return this.guestList;
+		} else {
+			return null;
 		}
 	}
 }

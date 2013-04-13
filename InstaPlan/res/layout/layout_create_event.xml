@@ -21,13 +21,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/createEvent_pageTitle"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp"
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/createEvent_eventTitle_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/createEvent_eventTitle" />
+                android:text="@string/createEvent_eventTitle"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/createEvent_eventTitle_editText"
@@ -49,7 +53,9 @@
                         android:id="@+id/createEvent_eventDate_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/createEvent_eventDate" />
+                        android:text="@string/createEvent_eventDate"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <Button
                         android:id="@+id/createEvent_eventDate_datePicker"
@@ -66,7 +72,9 @@
                         android:id="@+id/createEvent_eventTime_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/createEvent_eventTime" />
+                        android:text="@string/createEvent_eventTime"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <Button
                         android:id="@+id/createEvent_eventTime_timePicker"
@@ -80,7 +88,9 @@
                 android:id="@+id/createEvent_eventLocation_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/createEvent_eventLocation" />
+                android:text="@string/createEvent_eventLocation"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/createEvent_eventLocation_editText"
@@ -94,6 +104,8 @@
                 android:id="@+id/createEvent_eventDescription_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 android:text="@string/createEvent_eventDescription" />
 
             <EditText

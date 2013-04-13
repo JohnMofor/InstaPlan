@@ -2,8 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="100" >
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="All Events"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="30sp"
+        android:textStyle="italic" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="100" >
+    
 
     <ListView
         android:id="@+id/allEvents_listView"
@@ -14,28 +28,13 @@
         android:focusable="false" >
     </ListView>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/allEvents_createNew_button"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal"
         android:layout_weight="90"
-        android:orientation="horizontal"
-        android:weightSum="100" >
-
-        <Button
-            android:id="@+id/allEvents_createNew_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="50"
-            android:text="@string/allEvents_createNew_button" />
-
-<!--         <Button -->
-<!--             android:id="@+id/allEvents_deleteMultiple_button" -->
-<!--             android:layout_width="fill_parent" -->
-<!--             android:layout_height="wrap_content" -->
-<!--             android:layout_gravity="center_horizontal" -->
-<!--             android:layout_weight="50" -->
-<!--             android:text="@string/allEvents_deleteMultiple_button" /> -->
+        android:text="@string/allEvents_createNew_button" />
     </LinearLayout>
 
 </LinearLayout>

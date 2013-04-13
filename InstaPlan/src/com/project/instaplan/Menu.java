@@ -9,12 +9,19 @@ import android.widget.ListView;
 
 public class Menu extends ListActivity {
 
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		finish();
+	}
+
 	// String classes[] = { "Chatroom", "GetContacts", "Chatroom_ok",
 	// "CreateEvent", "RuntimeStatusCheck", "AllEvents", "Facebook",
 	// "GoogleMaps", "LocationActivity", "Downloader", "MessageActivity",
 	// "GCMActivity", "PhoneRegistration", "Task 14", "Task 15" };
-	String classes[] = { "AllEvents","PhoneRegistration", "CreateEvent","Chatroom", 
-			"RuntimeStatusCheck","Slider" ,"Chatroom_ok" };
+	String classes[] = { "AllEvents","PhoneRegistration", "CreateEvent", 
+			"Chatroom_ok","RuntimeStatusCheck","Map" };
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
