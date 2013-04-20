@@ -18,6 +18,8 @@ import com.google.android.gcm.GCMRegistrar;
 //import com.google.android.gms.maps.model.LatLng;
 //import com.google.android.gms.maps.model.Marker;
 //import com.google.android.gms.maps.model.MarkerOptions;
+//import com.project.instaplan.MyLocation.LocationResult;
+
 import android.view.LayoutInflater;
 //import android.view.Menu;
 import android.view.View;
@@ -60,9 +62,8 @@ import android.support.v4.app.FragmentActivity;
 import android.telephony.SmsManager;
 import android.util.Log;
 
-// All the commented sectors are google maps additions, which not everyone has.
 public class Chatroom_ok extends FragmentActivity implements
-//		View.OnClickListener, OnItemClickListener, OnMapLongClickListener {
+//		View.OnClickListener, OnItemClickListener, OnMapLongClickListener { // uncomment & delete line below. if you support google maps
 	View.OnClickListener, OnItemClickListener{
 
 	// Instantiate ALl Public Variables Here.
@@ -120,12 +121,21 @@ public class Chatroom_ok extends FragmentActivity implements
 	ListView create_event_guestList;
 	ArrayAdapter<String> guestList_adapter;
 
-	// Google Maps Variables
+	// Google Maps Variables (uncomment if you have google maps.
 	// ------------------------------------------------
-//	public GoogleMap mMap;
-//	public EditText addr;
-//	public Button searchMap, directions, track_button;
-//	public Marker info;
+	
+	/*
+	public GoogleMap mMap;
+	public EditText addr;
+	public Button searchMap, directions, track_button;
+	public Marker info;
+	*/
+	
+	// Doodle Variables
+	// ------------------------------------------------
+	
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -139,8 +149,6 @@ public class Chatroom_ok extends FragmentActivity implements
 		intentFilter.addAction("SMS_RECEIVED_ACTION");
 		Log.i(tag, "Done setting up filter");
 		getSessionInfo();
-		// Give the rest of the functions.
-		// buttons.setOnclickListener(this);
 	}
 
 	private void getGuestListInBackGround(String serverIdCode) {
@@ -153,23 +161,25 @@ public class Chatroom_ok extends FragmentActivity implements
 		initializeTab();
 		initializeChatroomVariables();
 		initializeSliderVariables();
-//		 initializeAllMapVariables();
+//		initializeAllMapVariables();
 
 	}
+	
+	/* Google maps.
+	private void initializeAllMapVariables() {
+		setUpMapIfNeeded();
+		addr = (EditText) findViewById(R.id.etAddress);
+		mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+		searchMap = (Button) findViewById(R.id.button1);
+		directions = (Button) findViewById(R.id.buttonDir);
+		track_button = (Button) findViewById(R.id.track);
+		searchMap.setOnClickListener(this);
+		directions.setOnClickListener(this);
+		track_button.setOnClickListener(this);
+		setUpMap(event.location, true);
 
-//	private void initializeAllMapVariables() {
-//		setUpMapIfNeeded();
-//		addr = (EditText) findViewById(R.id.etAddress);
-//		mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//		searchMap = (Button) findViewById(R.id.button1);
-//		directions = (Button) findViewById(R.id.buttonDir);
-//		track_button = (Button) findViewById(R.id.track);
-//		searchMap.setOnClickListener(this);
-//		directions.setOnClickListener(this);
-//		track_button.setOnClickListener(this);
-//		setUpMap(event.location, true);
-//
-//	}
+	}
+	*/
 
 	private void initializeGuestList() {
 		Log.i(logTag, "Guest Room Initializing All Variables");
@@ -219,7 +229,7 @@ public class Chatroom_ok extends FragmentActivity implements
 		Log.i(logTag, "In setting up tab");
 		setupTab(new TextView(this), "Wall", R.id.chatroom_tab);
 		setupTab(new TextView(this), "Doodle", R.id.doodle_tab);
-//		setupTab(new TextView(this), "Map", R.id.Map);
+		setupTab(new TextView(this), "Map", R.id.Map);
 		setupTab(new TextView(this), "Guest List", R.id.event_guestList_tab);
 	}
 
@@ -260,69 +270,73 @@ public class Chatroom_ok extends FragmentActivity implements
 		case R.id.chatroom_ok_showMenu_button:
 			do_show_menu();
 			break;
-//		case R.id.button1: // Search
-//			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//			imm.hideSoftInputFromWindow(addr.getWindowToken(), 0);
-//			String strAddress = addr.getText().toString();
-//			if (strAddress != "") {
-//				setUpMap(strAddress, false);
-//
-//			}
-//			showDialog(SEARCH_OPTIONS);
-//			break;
-//		case R.id.buttonDir:
-//			getDirections();
-//			break;
-//		case R.id.track:
-//			LocationResult locationResult = new LocationResult() {
-//				@Override
-//				public void gotLocation(final Location location) {
-//
-//					Handler handler = new Handler(Looper.getMainLooper());
-//					handler.post(new Runnable() {
-//
-//						@Override
-//						public void run() {
-//							CameraUpdate update = CameraUpdateFactory
-//									.newLatLng(new LatLng(location
-//											.getLatitude(), location
-//											.getLongitude()));
-//
-//							mMap.moveCamera(update);
-//							mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
-//							if (true)
-//								mMap.addMarker(new MarkerOptions().position(
-//										new LatLng(location.getLatitude(),
-//												location.getLongitude()))
-//										.title("You are here"));
-//							Geocoder coder = new Geocoder(
-//									getApplicationContext());
-//
-//							List<Address> address;
-//							try {
-//								address = coder.getFromLocation(
-//										location.getLatitude(),
-//										location.getLongitude(), 5);
-//								if (address.size() != 0) {
-//									addr.setText(address.get(0)
-//											.getFeatureName());
-//								}
-//							} catch (IOException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//								showMessage("Couldn't resolve address");
-//							}
-//						}
-//
-//					});
-//					// your UI code here
-//				}
-//
-//			};
-//			MyLocation myLocation = new MyLocation();
-//			myLocation.getLocation(this, locationResult);
-//			break;
+			
+		/* Google maps
+		case R.id.button1: // Search
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(addr.getWindowToken(), 0);
+			String strAddress = addr.getText().toString();
+			if (strAddress != "") {
+				setUpMap(strAddress, false);
+
+			}
+			showDialog(SEARCH_OPTIONS);
+			break;
+		case R.id.buttonDir:
+			getDirections();
+			break;
+		case R.id.track:
+			LocationResult locationResult = new LocationResult() {
+				@Override
+				public void gotLocation(final Location location) {
+
+					Handler handler = new Handler(Looper.getMainLooper());
+					handler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							CameraUpdate update = CameraUpdateFactory
+									.newLatLng(new LatLng(location
+											.getLatitude(), location
+											.getLongitude()));
+
+							mMap.moveCamera(update);
+							mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+							if (true)
+								mMap.addMarker(new MarkerOptions().position(
+										new LatLng(location.getLatitude(),
+												location.getLongitude()))
+										.title("You are here"));
+							Geocoder coder = new Geocoder(
+									getApplicationContext());
+
+							List<Address> address;
+							try {
+								address = coder.getFromLocation(
+										location.getLatitude(),
+										location.getLongitude(), 5);
+								if (address.size() != 0) {
+									addr.setText(address.get(0)
+											.getFeatureName());
+								}
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								showMessage("Couldn't resolve address");
+							}
+						}
+
+					});
+					// your UI code here
+				}
+
+			};
+			MyLocation myLocation = new MyLocation();
+			myLocation.getLocation(this, locationResult);
+			break;
+			*/
 		}
+		
 
 	}
 
@@ -370,21 +384,23 @@ public class Chatroom_ok extends FragmentActivity implements
 		return super.onCreateDialog(id);
 	}
 
-//	private Dialog showAlertBox2() {
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		final ArrayList<String> guestList1 = plotOptions();
-//		CharSequence[] charSeq = guestList1.toArray(new CharSequence[guestList1
-//				.size()]);
-//
-//		builder.setTitle("Your options");
-//		builder.setItems(charSeq, new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int index) {
-//				addr.setText(guestList1.get(index));
-//			}
-//		});
-//		Log.i(tag, "Builder settup");
-//		return builder.create();
-//	}
+	/*
+	private Dialog showAlertBox2() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final ArrayList<String> guestList1 = plotOptions();
+		CharSequence[] charSeq = guestList1.toArray(new CharSequence[guestList1
+				.size()]);
+
+		builder.setTitle("Your options");
+		builder.setItems(charSeq, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int index) {
+				addr.setText(guestList1.get(index));
+			}
+		});
+		Log.i(tag, "Builder settup");
+		return builder.create();
+	}
+	*/
 
 	public AlertDialog showAlertBox() {
 		final ArrayList<ArrayList<String>> guestList1 = event.guestList;
@@ -815,7 +831,7 @@ public class Chatroom_ok extends FragmentActivity implements
 		registerReceiver(intentReceiver, intentFilter);
 		super.onResume();
 		chatroom_listView.setSelection(event.messages.size() - 1);
-//		setUpMapIfNeeded();
+//		setUpMapIfNeeded(); // uncomment if you support Google map.
 	}
 
 	@Override
@@ -832,7 +848,7 @@ public class Chatroom_ok extends FragmentActivity implements
 		Log.i(tag, "in get Guest List... server Id code: " + serverIdCode);
 		ArrayList<String> names = new ArrayList<String>();
 		ArrayList<String> phoneNumbers = new ArrayList<String>();
-		String strUrl = "http://mj-server.mit.edu/instaplan/command/"
+		String strUrl = "http://instaplan.mit.edu/instaplan/command/"
 				+ URLEncoder.encode(serverIdCode) + "/?command=getGuestList";
 		try {
 			// String myUrl = URLEncoder.encode(strUrl, "UTF-8");
@@ -939,115 +955,283 @@ public class Chatroom_ok extends FragmentActivity implements
 
 	}
 
-//	@Override
-//	public void onMapLongClick(LatLng arg0) {
-//
-//		info = mMap.addMarker(new MarkerOptions().position(arg0).title("Me"));
-//
-//	}
-//
-//	private void setUpMapIfNeeded() {
-//		// Do a null check to confirm that we have not already instantiated the
-//		// map.
-//		if (mMap == null) {
-//			// Try to obtain the map from the SupportMapFragment.
-//			mMap = ((SupportMapFragment) getSupportFragmentManager()
-//					.findFragmentById(R.id.map)).getMap();
-//			// Check if we were successful in obtaining the map.
-//			if (mMap != null) {
-//				setUpMap();
-//			}
-//		}
-//	}
-//
-//	private void setUpMap(String strAddress, boolean mark) {
-//		Geocoder coder = new Geocoder(this);
-//
-//		try {
-//			List<Address> address = coder.getFromLocationName(strAddress, 5);
-//			if (address.size() == 0) {
-//				return;
-//			} else {
-//				Address location = address.get(0);
-//				location.getLatitude();
-//				location.getLongitude();
-//				CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(
-//						location.getLatitude(), location.getLongitude()));
-//				mMap.moveCamera(update);
-//				mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
-//				if (mark)
-//					mMap.addMarker(new MarkerOptions().position(
-//							new LatLng(location.getLatitude(), location
-//									.getLongitude())).title(event.title));
-//
-//			}
-//		} catch (IOException e) {
-//
-//		}
-//
-//	}
-//
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.layout_menu, menu);
-//		return true;
-//	}
-//
-//	private void setUpMap() {
-//		mMap.setOnMapLongClickListener(this);
-//	}
-//
-//	public void getDirections() {
-//		Geocoder coder = new Geocoder(this);
-//
-//		try {
-//			List<Address> to_address = coder.getFromLocationName(
-//					event.location, 5);
-//			List<Address> from_address = coder.getFromLocationName(addr
-//					.getText().toString(), 5);
-//			if (to_address.size() == 0 || from_address.size() == 0) {
-//				showMessage("Could not resolve locations.");
-//				return;
-//			} else {
-//				Address to_location = to_address.get(0);
-//				Address from_location = from_address.get(0);
-//				// to_location.getLatitude();
-//				// to_location.getLongitude();
-//				Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-//						Uri.parse("http://maps.google.com/maps?saddr="
-//								+ from_location.getLatitude() + ","
-//								+ from_location.getLongitude() + "&daddr="
-//								+ to_location.getLatitude() + ","
-//								+ to_location.getLongitude() + ""));
-//				startActivity(intent);
-//			}
-//		} catch (IOException e) {
-//			showMessage("Error launching Google Maps");
-//		}
-//
-//	}
-//
-//	public ArrayList<String> plotOptions() {
-//		ArrayList<String> out = new ArrayList<String>();
-//		Geocoder coder = new Geocoder(this);
-//		try {
-//			List<Address> from_address = coder.getFromLocationName(addr
-//					.getText().toString(), 5);
-//			if (from_address.size() == 0) {
-//				showMessage("Could not resolve locations.");
-//				return null;
-//			} else {
-//				for (Address option : from_address) {
-//					out.add(option.getFeatureName());
-//				}
-//				return out;
-//			}
-//		} catch (IOException e) {
-//			showMessage("Error launching Google Maps");
-//		}
-//		return out;
-//
-//	}
+	/*
+	@Override
+	public void onMapLongClick(LatLng arg0) {
+
+		info = mMap.addMarker(new MarkerOptions().position(arg0).title("Me"));
+
+	}
+
+	private void setUpMapIfNeeded() {
+		// Do a null check to confirm that we have not already instantiated the
+		// map.
+		if (mMap == null) {
+			// Try to obtain the map from the SupportMapFragment.
+			mMap = ((SupportMapFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.map)).getMap();
+			// Check if we were successful in obtaining the map.
+			if (mMap != null) {
+				setUpMap();
+			}
+		}
+	}
+
+	private void setUpMap(String strAddress, boolean mark) {
+		Geocoder coder = new Geocoder(this);
+
+		try {
+			List<Address> address = coder.getFromLocationName(strAddress, 5);
+			if (address.size() == 0) {
+				return;
+			} else {
+				Address location = address.get(0);
+				location.getLatitude();
+				location.getLongitude();
+				CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(
+						location.getLatitude(), location.getLongitude()));
+				mMap.moveCamera(update);
+				mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+				if (mark)
+					mMap.addMarker(new MarkerOptions().position(
+							new LatLng(location.getLatitude(), location
+									.getLongitude())).title(event.title));
+
+			}
+		} catch (IOException e) {
+
+		}
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.layout_menu, menu);
+		return true;
+	}
+
+	private void setUpMap() {
+		mMap.setOnMapLongClickListener(this);
+	}
+
+	public void getDirections() {
+		Geocoder coder = new Geocoder(this);
+
+		try {
+			List<Address> to_address = coder.getFromLocationName(
+					event.location, 5);
+			List<Address> from_address = coder.getFromLocationName(addr
+					.getText().toString(), 5);
+			if (to_address.size() == 0 || from_address.size() == 0) {
+				showMessage("Could not resolve locations.");
+				return;
+			} else {
+				Address to_location = to_address.get(0);
+				Address from_location = from_address.get(0);
+				// to_location.getLatitude();
+				// to_location.getLongitude();
+				Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+						Uri.parse("http://maps.google.com/maps?saddr="
+								+ from_location.getLatitude() + ","
+								+ from_location.getLongitude() + "&daddr="
+								+ to_location.getLatitude() + ","
+								+ to_location.getLongitude() + ""));
+				startActivity(intent);
+			}
+		} catch (IOException e) {
+			showMessage("Error launching Google Maps");
+		}
+
+	}
+
+	public ArrayList<String> plotOptions() {
+		ArrayList<String> out = new ArrayList<String>();
+		Geocoder coder = new Geocoder(this);
+		try {
+			List<Address> from_address = coder.getFromLocationName(addr
+					.getText().toString(), 5);
+			if (from_address.size() == 0) {
+				showMessage("Could not resolve locations.");
+				return null;
+			} else {
+				for (Address option : from_address) {
+					out.add(option.getFeatureName());
+				}
+				return out;
+			}
+		} catch (IOException e) {
+			showMessage("Error launching Google Maps");
+		}
+		return out;
+
+	}
+	*/
+	
+	
+	
+	
+	/*
+	 * For Marissa. USE THIS CONVENTION!
+	 * To populate your Poll class, Modify the getExternalPollList() function.
+	 * To send data to the server, use the updatePollInBackGround function. eg:
+	 * NB. Use a String Builder! I suspect you will have huge strings!! I will do the URLEncode... just send the string as shown below.
+	 * - to create a new poll use the command: updatePollInBackGround("addPoll","Poll Title%--%OptName<887>phoneNum1,phoneNum2||OptName<887>phoneNum3,phoneNum3<br>...")
+	 * - to update an option, use the command: updatePollInBackGround("updateOptionInPoll","Poll Title%--%OptName<887>NewListofphoneNumbers")
+	 * - to add an option to a Poll, use the command: updatePollInBackGround("addOptionToPoll","Poll Title%--%OptName<887>ListOfContacts")
+	 * - to remove a Poll use the command: updatePollInBackGround("removePoll","Poll Title")
+	 * - to remove an option from Poll, use the command: updatePollInBackGround("removeOptionToPoll","Poll Title%--%OptName")
+	 * 
+	 * The only way to get Data from the server, is to use the getPollListInBackGround, so when you update a Poll, you may want to recall the 
+	 * getPollListInBackGround() to have updated data in your Poll Class.
+	 * 
+	 * Enjoy!
+	 */
+	
+
+	
+	private void updatePollInBackGround(String updateCommand, String content) {
+		/*
+		 * 	elif command=="addOptionToPoll":
+    		elif command=="addPoll":
+    		elif command=="removeOptionFromPoll":
+    		elif command=="updateOptionInPoll":
+		 */
+		Log.i(tag, "This is the update Command we will try to process: "
+				+ event.serverIdCode);
+		
+		new UpdatePoll().execute(updateCommand,content);
+	}
+	
+	
+	public class UpdatePoll extends AsyncTask<String, Void, Void>{
+
+		@Override
+		protected Void doInBackground(String... params) {
+			String updateCommand = params[0];
+			String content = params[1];
+			updatePoll(updateCommand, content);
+			return null;
+		}
+		
+	}
+	public void updatePoll(String updateCommand, String content) {
+		URL url;
+		StringBuilder strUrl = new StringBuilder();
+		strUrl.append("http://instaplan.mit.edu/instaplan/command/");
+		strUrl.append(URLEncoder.encode(event.serverIdCode));
+		strUrl.append("/?command=");
+		strUrl.append(URLEncoder.encode(updateCommand));
+		strUrl.append("&content=");
+		strUrl.append(URLEncoder.encode(content));
+		Log.i(logTag, "Executing this URL");
+		try {
+			url = new URL(strUrl.toString());
+
+			HttpURLConnection urlConnection = (HttpURLConnection) url
+					.openConnection();
+			Log.i(logTag, "connection created!");
+			urlConnection.setRequestMethod("GET");
+			urlConnection.connect();
+			int out = urlConnection.getResponseCode();
+			String server_reply = urlConnection.getResponseMessage();
+			urlConnection.disconnect();
+			if (out == 200) {
+				Log.i(logTag, "Successfully updated Poll: code " + out);
+			} else {
+				Log.i(logTag, "Update Failed due to:  " + out + " meaning: "
+						+ server_reply);
+			}
+			return;
+		} catch (MalformedURLException e) {
+			//
+			// e.printStackTrace();
+			Log.i(logTag, "ERROR SENDING Update request... MalFormedUrl");
+			return;
+		} catch (IOException e) {
+			//
+			// e.printStackTrace();
+			Log.i(logTag, "ERROR SENDING Update request type 2... IOEX..");
+			return;
+		}
+	}
+	
+	private void getPollListInBackGround() {
+		Log.i(tag, "This is the server code I will be trying to fetch: "
+				+ event.serverIdCode);
+		new GetPollList().execute();
+	}
+	
+	
+	public class GetPollList extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... params) {
+			getExternalPollList();
+			return null;
+		}
+
+	}
+	
+	
+	// Marissa fix this ;)
+	private void getExternalPollList() {
+		// Use this to populate your Poll class.
+		
+		URL url;
+		Log.i(tag, "in get Poll List... server Id code: " + event.serverIdCode);
+		String strUrl = "http://instaplan.mit.edu/instaplan/command/"
+				+ URLEncoder.encode(event.serverIdCode) + "/?command=getPollList";
+		try {
+			url = new URL(strUrl);
+
+			HttpURLConnection urlConnection = (HttpURLConnection) url
+					.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setConnectTimeout(3000);
+			urlConnection.connect();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					urlConnection.getInputStream()));
+			
+			// This is your Stuff!!!!!
+			String pollListString = reader.readLine();// This is your Stuff!!!!!
+			// This is your Stuff!!!!!
+			
+			
+			Log.i(tag, "This is the response line?: " + pollListString);
+			reader.close();
+			urlConnection.disconnect();
+			if (pollListString.contains("<br>")) {
+				String[] pollsStrings = pollListString.split("<br>");
+				for (String pollString : pollsStrings) {
+					if (pollString.contains("%--%")) {
+						String[] parts = pollString.split("%--%");
+						
+						// Do something with the parts. (title,content)
+//						phoneNumbers.add(parts[1]);
+//						String displayName = getContactDisplayNameByNumber(
+//								parts[1], getApplicationContext());
+//						if (displayName != null) {
+//							names.add(displayName);
+//						} else {
+//							names.add(parts[0] + " -host contact");
+//						}
+					}
+				}
+			}
+
+			return;
+		} catch (MalformedURLException e) {
+			//
+			// e.printStackTrace();
+			Log.i(logTag, "ERROR RETRIEVING GUESTLIST");
+			return;
+		} catch (IOException e) {
+			//
+			// e.printStackTrace();
+			Log.i(logTag, "ERROR RETRIEVING GUESTLIST2");
+			return;
+		}
+	}
+	
 
 }

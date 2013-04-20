@@ -88,7 +88,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			"June", "July", "August", "September", "October", "November",
 			"December" };
 	
-	String inviteeString="";
+	StringBuilder inviteeString = new StringBuilder();
 	int ERROR_RESULT_CODE2 = 999;
 	int ERROR_RESULT_CODE1 = 666;
 	final int DATE_DIALOG = 123;
@@ -342,7 +342,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			if (gcmEnabled() && sessionHasInternet) {
 				Log.i(logTag, "Good. GCM is enabled on device");
 				for (ClassPeople invitee: createdEvent.invited){
-					inviteeString+=invitee.name+"%--%"+invitee.phoneNumber+"<br>";
+					inviteeString.append(invitee.name+"%--%"+invitee.phoneNumber+"<br>");
 				}
 				createdEvent.serverIdCode = generateEventId(initialPost);
 				for (ClassPeople invitee : createdEvent.invited) {
@@ -393,12 +393,12 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	private String generateEventId(String initialPost) {
 		URL url;
 		Log.i(logTag, "generating EventIdCode");
-		String strUrl = "http://mj-server.mit.edu/instaplan/registerEvent/?parameters="
+		String strUrl = "http://instaplan.mit.edu/instaplan/registerEvent/?parameters="
 				+ URLEncoder.encode(initialPost)
 				+ "&hostDeviceId="
 				+ ClassUniverse.device_id
 				+"&invitees="
-				+ URLEncoder.encode(inviteeString);
+				+ URLEncoder.encode(inviteeString.toString());
 		try {
 			// String myUrl = URLEncoder.encode(strUrl, "UTF-8");
 			// url = new URL(myUrl);
@@ -432,10 +432,10 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	public int sendGcmCommand(String content, String TophoneNumber) {
 		URL url;
 		String strUrl = "http://mj-server.mit.edu/instaplan/command/"
-				+ createdEvent.serverIdCode + "/?command=sendSmsTo"
-				+ TophoneNumber + "&content=" + content + "&hostDeviceId="
-				+ ClassUniverse.device_id + "&sender_phoneNumber="
-				+ ClassUniverse.mPhoneNumber;
+				+ URLEncoder.encode(createdEvent.serverIdCode) + "/?command=sendSmsTo"
+				+ URLEncoder.encode(TophoneNumber) + "&content=" + URLEncoder.encode(content) + "&hostDeviceId="
+				+ URLEncoder.encode(ClassUniverse.device_id) + "&sender_phoneNumber="
+				+ URLEncoder.encode(ClassUniverse.mPhoneNumber);
 		Log.i(logTag, "Executing this URL: " + strUrl);
 		try {
 			// String myUrl = URLEncoder.encode(strUrl, "UTF-8");
