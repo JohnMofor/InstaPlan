@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">InstaPlan</string>
+    <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="chatroom_button">Post</string>
@@ -15,7 +16,7 @@
     <string name="createEvent_eventDate">Date :  </string>
     <string name="createEvent_eventLocation">Location</string>
     <string name="createEvent_locationHint">Can be updated at will!</string>
-    <string name="createEvent_eventDescription">Give a brief Event Description</string>
+    <string name="createEvent_eventDescription">Brief Description</string>
     <string name="createEvent_descriptionHint">Get Hype!</string>
     <string name="createEvent_facebookStatus">Sync with Facebook?</string>
     <string name="createEvent_invite_local_contact_button">Invite local contacts</string>
