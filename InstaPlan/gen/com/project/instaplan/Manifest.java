@@ -9,6 +9,11 @@ package com.project.instaplan;
 
 public final class Manifest {
     public static final class permission {
+        /**      <permission 
+         android:name="com.project.instaplan.permission.MAPS_RECEIVE" 
+         android:protectionLevel="signature" /> 
+     <uses-permission android:name="com.project.instaplan.permission.MAPS_RECEIVE" /> 
+         */
         public static final String C2D_MESSAGE="com.project.instaplan.permission.C2D_MESSAGE";
     }
 }

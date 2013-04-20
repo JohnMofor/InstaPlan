@@ -140,7 +140,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 			break;
 
 		case R.id.createEvent_toggle_gcm_button:
-			startActivity(new Intent("com.project.instaplan2.PhoneRegistration"));
+			startActivity(new Intent("com.project.instaplan.PhoneRegistration"));
 			break;
 
 		case R.id.createEvent_eventDate_datePicker:
@@ -499,7 +499,7 @@ public class CreateEvent extends Activity implements View.OnClickListener {
 	// }
 
 	private void doLocalContactCode() {
-		launchGetContacts = new Intent("com.project.instaplan2.GetContacts");
+		launchGetContacts = new Intent("com.project.instaplan.GetContacts");
 		Log.i(logTag, "Going into GetContacts");
 		startActivityForResult(launchGetContacts, GetContactsResultCode);
 	}

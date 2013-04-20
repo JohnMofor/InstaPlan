@@ -8,13 +8,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+//import java.util.List;
 import com.google.android.gcm.GCMRegistrar;
-
+//import com.google.android.gms.maps.CameraUpdate;
+//import com.google.android.gms.maps.CameraUpdateFactory;
+//import com.google.android.gms.maps.GoogleMap;
+//import com.google.android.gms.maps.SupportMapFragment;
+//import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+//import com.google.android.gms.maps.model.LatLng;
+//import com.google.android.gms.maps.model.Marker;
+//import com.google.android.gms.maps.model.MarkerOptions;
 import android.view.LayoutInflater;
+//import android.view.Menu;
 import android.view.View;
+//import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+//import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -24,7 +35,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TabHost.TabSpec;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -33,19 +43,27 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+//import android.location.Address;
+//import android.location.Geocoder;
+//import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+//import android.os.Handler;
+//import android.os.Looper;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.Settings.Secure;
+import android.support.v4.app.FragmentActivity;
 import android.telephony.SmsManager;
 import android.util.Log;
 
-public class Chatroom_ok extends ListActivity implements View.OnClickListener,
-		OnItemClickListener {
+// All the commented sectors are google maps additions, which not everyone has.
+public class Chatroom_ok extends FragmentActivity implements
+//		View.OnClickListener, OnItemClickListener, OnMapLongClickListener {
+	View.OnClickListener, OnItemClickListener{
 
 	// Instantiate ALl Public Variables Here.
 	String logTag = "MJ------>";
@@ -63,6 +81,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 	TextView chatroom_new_post;
 	TextView chatroom_title;
 	TextView chatroom_new_sms;
+	
 
 	AwesomeAdapter adapter;
 
@@ -79,6 +98,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 	int ERROR_RESULT_CODE2 = 999;
 	final int SHOW_GUEST_LIST = 231;
 	final int EVENT_INFO = 232;
+	final int SEARCH_OPTIONS = 992;
 	int ERROR_RESULT_CODE1 = 666;
 	int GCM_SERVER_RESPONSE_WAIT_TIME = 3000;
 	boolean sessionHasInternet = false;
@@ -91,7 +111,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 	Button chatroom_ok_slider_popout_button;
 	Button chatroom_ok_showEventInfo_button;
 	Button chatroom_ok_showEventGuestList_button;
-	Button chatroom_ok_showEventSettings_button;
+	Button chatroom_ok_showMenu_button;
 	TransparentPanel popup;
 	Dialog eventInfoDialog;
 
@@ -99,6 +119,13 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 	// ------------------------------------------------
 	ListView create_event_guestList;
 	ArrayAdapter<String> guestList_adapter;
+
+	// Google Maps Variables
+	// ------------------------------------------------
+//	public GoogleMap mMap;
+//	public EditText addr;
+//	public Button searchMap, directions, track_button;
+//	public Marker info;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +153,23 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 		initializeTab();
 		initializeChatroomVariables();
 		initializeSliderVariables();
-		// initializeGuestList();
+//		 initializeAllMapVariables();
 
 	}
+
+//	private void initializeAllMapVariables() {
+//		setUpMapIfNeeded();
+//		addr = (EditText) findViewById(R.id.etAddress);
+//		mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//		searchMap = (Button) findViewById(R.id.button1);
+//		directions = (Button) findViewById(R.id.buttonDir);
+//		track_button = (Button) findViewById(R.id.track);
+//		searchMap.setOnClickListener(this);
+//		directions.setOnClickListener(this);
+//		track_button.setOnClickListener(this);
+//		setUpMap(event.location, true);
+//
+//	}
 
 	private void initializeGuestList() {
 		Log.i(logTag, "Guest Room Initializing All Variables");
@@ -153,9 +194,10 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 
 	private void initializeChatroomVariables() {
 		Log.i(logTag, "Chatroom_ok Initializing All Variables");
-		chatroom_listView = getListView();
+		chatroom_listView = (ListView) findViewById(R.id.chatroom_ok_listview);
 		chatroom_post_button = (Button) findViewById(R.id.chatroom_post_button);
 		chatroom_entered_post_textView = (TextView) findViewById(R.id.chatroom_entered_post_textView);
+		
 		Log.i(tag, "Done with Initialization of all variables!");
 	}
 
@@ -168,8 +210,8 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 		chatroom_ok_showEventInfo_button.setOnClickListener(this);
 		chatroom_ok_showEventGuestList_button = (Button) findViewById(R.id.chatroom_ok_showEventGuestList_button);
 		chatroom_ok_showEventGuestList_button.setOnClickListener(this);
-		chatroom_ok_showEventSettings_button = (Button) findViewById(R.id.chatroom_ok_showEventSettings_button);
-		chatroom_ok_showEventSettings_button.setOnClickListener(this);
+		chatroom_ok_showMenu_button = (Button) findViewById(R.id.chatroom_ok_showMenu_button);
+		chatroom_ok_showMenu_button.setOnClickListener(this);
 
 	}
 
@@ -177,7 +219,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 		Log.i(logTag, "In setting up tab");
 		setupTab(new TextView(this), "Wall", R.id.chatroom_tab);
 		setupTab(new TextView(this), "Doodle", R.id.doodle_tab);
-		setupTab(new TextView(this), "Map", R.id.map_tab);
+//		setupTab(new TextView(this), "Map", R.id.Map);
 		setupTab(new TextView(this), "Guest List", R.id.event_guestList_tab);
 	}
 
@@ -211,9 +253,82 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 			do_show_eventInfo();
 			break;
 		case R.id.chatroom_ok_showEventGuestList_button:
+
 			do_show_guestList();
+
 			break;
+		case R.id.chatroom_ok_showMenu_button:
+			do_show_menu();
+			break;
+//		case R.id.button1: // Search
+//			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//			imm.hideSoftInputFromWindow(addr.getWindowToken(), 0);
+//			String strAddress = addr.getText().toString();
+//			if (strAddress != "") {
+//				setUpMap(strAddress, false);
+//
+//			}
+//			showDialog(SEARCH_OPTIONS);
+//			break;
+//		case R.id.buttonDir:
+//			getDirections();
+//			break;
+//		case R.id.track:
+//			LocationResult locationResult = new LocationResult() {
+//				@Override
+//				public void gotLocation(final Location location) {
+//
+//					Handler handler = new Handler(Looper.getMainLooper());
+//					handler.post(new Runnable() {
+//
+//						@Override
+//						public void run() {
+//							CameraUpdate update = CameraUpdateFactory
+//									.newLatLng(new LatLng(location
+//											.getLatitude(), location
+//											.getLongitude()));
+//
+//							mMap.moveCamera(update);
+//							mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+//							if (true)
+//								mMap.addMarker(new MarkerOptions().position(
+//										new LatLng(location.getLatitude(),
+//												location.getLongitude()))
+//										.title("You are here"));
+//							Geocoder coder = new Geocoder(
+//									getApplicationContext());
+//
+//							List<Address> address;
+//							try {
+//								address = coder.getFromLocation(
+//										location.getLatitude(),
+//										location.getLongitude(), 5);
+//								if (address.size() != 0) {
+//									addr.setText(address.get(0)
+//											.getFeatureName());
+//								}
+//							} catch (IOException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//								showMessage("Couldn't resolve address");
+//							}
+//						}
+//
+//					});
+//					// your UI code here
+//				}
+//
+//			};
+//			MyLocation myLocation = new MyLocation();
+//			myLocation.getLocation(this, locationResult);
+//			break;
 		}
+
+	}
+
+	private void do_show_menu() {
+		startActivity(new Intent("com.project.instaplan.Menu"));
+		finish();
 	}
 
 	private void do_show_guestList() {
@@ -240,46 +355,75 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 		case SHOW_GUEST_LIST:
 			Log.i(tag, "Now going to show alert");
 			AlertDialog guestList_dialog = showAlertBox();
+
 			return guestList_dialog;
+
 		case EVENT_INFO:
 			eventInfoDialog = new Dialog(this);
 			eventInfoDialog.setContentView(R.layout.layout_show_event_info);
-			eventInfoDialog.setTitle(event.time + " Event Info");
+			eventInfoDialog.setTitle(event.title + " Event Info");
 			populateDialog();
 			return eventInfoDialog;
+//		case SEARCH_OPTIONS:
+//			return showAlertBox2();
 		}
 		return super.onCreateDialog(id);
 	}
 
+//	private Dialog showAlertBox2() {
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		final ArrayList<String> guestList1 = plotOptions();
+//		CharSequence[] charSeq = guestList1.toArray(new CharSequence[guestList1
+//				.size()]);
+//
+//		builder.setTitle("Your options");
+//		builder.setItems(charSeq, new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int index) {
+//				addr.setText(guestList1.get(index));
+//			}
+//		});
+//		Log.i(tag, "Builder settup");
+//		return builder.create();
+//	}
+
 	public AlertDialog showAlertBox() {
 		final ArrayList<ArrayList<String>> guestList1 = event.guestList;
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		Log.i(tag, "About to set up charseq");
-		Log.i(tag, "guestList: ");
-		for (ArrayList<String> ar : guestList1) {
-			Log.i(tag, "Array XXXXXXXXXXXX");
-			for (String pr : ar) {
-				Log.i(tag, pr);
+		if (event.guestList.size() != 0) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			Log.i(tag, "About to set up charseq");
+			Log.i(tag, "guestList: ");
+			for (ArrayList<String> ar : guestList1) {
+				Log.i(tag, "Array XXXXXXXXXXXX");
+				for (String pr : ar) {
+					Log.i(tag, pr);
+				}
 			}
-		}
-		CharSequence[] charSeq = guestList1.get(0).toArray(
-				new CharSequence[guestList1.get(0).size()]);
-		for (CharSequence str : charSeq) {
-			Log.i(tag, "Char found: " + str);
-		}
-		builder.setTitle(event.title + " Guest List");
-		builder.setItems(charSeq, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int index) {
-				Log.i(tag, guestList1.get(0).get(index)
-						+ " was clicked, Phone Number: "
-						+ guestList1.get(1).get(index));
-				showMessage(guestList1.get(0).get(index)
-						+ " was clicked, Phone Number: "
-						+ guestList1.get(1).get(index));
+			CharSequence[] charSeq = guestList1.get(0).toArray(
+					new CharSequence[guestList1.get(0).size()]);
+			for (CharSequence str : charSeq) {
+				Log.i(tag, "Char found: " + str);
 			}
-		});
-		Log.i(tag, "Builder settup");
-		return builder.create();
+			builder.setTitle(event.title + " Guest List");
+			builder.setItems(charSeq, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int index) {
+					Log.i(tag, guestList1.get(0).get(index)
+							+ " was clicked, Phone Number: "
+							+ guestList1.get(1).get(index));
+					showMessage(guestList1.get(0).get(index)
+							+ " was clicked, Phone Number: "
+							+ guestList1.get(1).get(index));
+				}
+			});
+			Log.i(tag, "Builder settup");
+			return builder.create();
+		} else {
+			showMessage("No guests");
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(event.title + " Guest List");
+			builder.setMessage("No guests.");
+
+			return builder.create();
+		}
 	}
 
 	private void do_show_eventInfo() {
@@ -344,7 +488,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 				adapter.notifyDataSetChanged();
 
 				chatroom_entered_post_textView.setText("");
-				getListView().setSelection(event.messages.size() - 1);
+				chatroom_listView.setSelection(event.messages.size() - 1);
 				spreadPost(entered_text);
 
 			} else {
@@ -639,7 +783,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 				event = ClassUniverse.universeAllEventHashLookUp.get(eventHash);
 				event.externalUpdateCount = 0;
 				adapter = new AwesomeAdapter(this, event.messages);
-				setListAdapter(adapter);
+				chatroom_listView.setAdapter(adapter);
 			}
 		} else {
 			Log.i(tag, "Event not found on this device. No adapter required..");
@@ -656,9 +800,10 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getExtras().containsKey(("smsFor" + event.title))) {
 				// initializeAllVariables();
+				
 				initializeChatroomVariables();
 				adapter.notifyDataSetChanged();
-				getListView().setSelection(event.messages.size() - 1);
+				chatroom_listView.setSelection(event.messages.size() - 1);
 				event.externalUpdateCount--;
 			}
 		}
@@ -669,7 +814,8 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 		// Auto-generated method stub
 		registerReceiver(intentReceiver, intentFilter);
 		super.onResume();
-		getListView().setSelection(event.messages.size() - 1);
+		chatroom_listView.setSelection(event.messages.size() - 1);
+//		setUpMapIfNeeded();
 	}
 
 	@Override
@@ -687,7 +833,7 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 		ArrayList<String> names = new ArrayList<String>();
 		ArrayList<String> phoneNumbers = new ArrayList<String>();
 		String strUrl = "http://mj-server.mit.edu/instaplan/command/"
-				+ serverIdCode + "/?command=getGuestList";
+				+ URLEncoder.encode(serverIdCode) + "/?command=getGuestList";
 		try {
 			// String myUrl = URLEncoder.encode(strUrl, "UTF-8");
 			// url = new URL(myUrl);
@@ -792,5 +938,116 @@ public class Chatroom_ok extends ListActivity implements View.OnClickListener,
 				+ event.guestList.get(1).get(index));
 
 	}
+
+//	@Override
+//	public void onMapLongClick(LatLng arg0) {
+//
+//		info = mMap.addMarker(new MarkerOptions().position(arg0).title("Me"));
+//
+//	}
+//
+//	private void setUpMapIfNeeded() {
+//		// Do a null check to confirm that we have not already instantiated the
+//		// map.
+//		if (mMap == null) {
+//			// Try to obtain the map from the SupportMapFragment.
+//			mMap = ((SupportMapFragment) getSupportFragmentManager()
+//					.findFragmentById(R.id.map)).getMap();
+//			// Check if we were successful in obtaining the map.
+//			if (mMap != null) {
+//				setUpMap();
+//			}
+//		}
+//	}
+//
+//	private void setUpMap(String strAddress, boolean mark) {
+//		Geocoder coder = new Geocoder(this);
+//
+//		try {
+//			List<Address> address = coder.getFromLocationName(strAddress, 5);
+//			if (address.size() == 0) {
+//				return;
+//			} else {
+//				Address location = address.get(0);
+//				location.getLatitude();
+//				location.getLongitude();
+//				CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(
+//						location.getLatitude(), location.getLongitude()));
+//				mMap.moveCamera(update);
+//				mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+//				if (mark)
+//					mMap.addMarker(new MarkerOptions().position(
+//							new LatLng(location.getLatitude(), location
+//									.getLongitude())).title(event.title));
+//
+//			}
+//		} catch (IOException e) {
+//
+//		}
+//
+//	}
+//
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.layout_menu, menu);
+//		return true;
+//	}
+//
+//	private void setUpMap() {
+//		mMap.setOnMapLongClickListener(this);
+//	}
+//
+//	public void getDirections() {
+//		Geocoder coder = new Geocoder(this);
+//
+//		try {
+//			List<Address> to_address = coder.getFromLocationName(
+//					event.location, 5);
+//			List<Address> from_address = coder.getFromLocationName(addr
+//					.getText().toString(), 5);
+//			if (to_address.size() == 0 || from_address.size() == 0) {
+//				showMessage("Could not resolve locations.");
+//				return;
+//			} else {
+//				Address to_location = to_address.get(0);
+//				Address from_location = from_address.get(0);
+//				// to_location.getLatitude();
+//				// to_location.getLongitude();
+//				Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+//						Uri.parse("http://maps.google.com/maps?saddr="
+//								+ from_location.getLatitude() + ","
+//								+ from_location.getLongitude() + "&daddr="
+//								+ to_location.getLatitude() + ","
+//								+ to_location.getLongitude() + ""));
+//				startActivity(intent);
+//			}
+//		} catch (IOException e) {
+//			showMessage("Error launching Google Maps");
+//		}
+//
+//	}
+//
+//	public ArrayList<String> plotOptions() {
+//		ArrayList<String> out = new ArrayList<String>();
+//		Geocoder coder = new Geocoder(this);
+//		try {
+//			List<Address> from_address = coder.getFromLocationName(addr
+//					.getText().toString(), 5);
+//			if (from_address.size() == 0) {
+//				showMessage("Could not resolve locations.");
+//				return null;
+//			} else {
+//				for (Address option : from_address) {
+//					out.add(option.getFeatureName());
+//				}
+//				return out;
+//			}
+//		} catch (IOException e) {
+//			showMessage("Error launching Google Maps");
+//		}
+//		return out;
+//
+//	}
 
 }

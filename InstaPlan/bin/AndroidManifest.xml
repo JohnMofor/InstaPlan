@@ -1,24 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.project.instaplan"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="2"
+    android:versionName="2.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="14" />
 
+<!--     <permission -->
+<!--         android:name="com.project.instaplan.permission.MAPS_RECEIVE" -->
+<!--         android:protectionLevel="signature" /> -->
+
+<!--     <uses-permission android:name="com.project.instaplan.permission.MAPS_RECEIVE" /> -->
+
+    <permission
+        android:name="com.project.instaplan.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.project.instaplan.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/instaplan_icon"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Black" >
+<!--         <meta-data -->
+<!--             android:name="com.google.android.maps.v2.API_KEY" -->
+<!--             android:value="AIzaSyB60xE51V5sAKcKANwAK7qiFCzZCZpUwgI" /> -->
+
         <activity
             android:name=".Intro"
             android:label="@string/app_name" >
@@ -28,6 +56,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name=".Menu"
             android:label="@string/app_name" >
@@ -38,10 +67,73 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Slider"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.Slider" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Map"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.Map" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Chatroom_ok"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.Chatroom_ok" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".GetContacts"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="com.project.instaplan.GetContacts" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".GCMActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.GCMActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".PhoneRegistration"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.PhoneRegistration" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DialogActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.DialogActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MessageActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.MessageActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -65,6 +157,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Downloader"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.Downloader" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".RuntimeStatusCheck"
             android:label="@string/app_name" >
             <intent-filter>
@@ -82,16 +183,37 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LocationActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.project.instaplan.LocationActivity" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.project.instaplan" />
+            </intent-filter>
+        </receiver>
         <receiver android:name=".SMSReceiver" >
 ​​​​​​​​​​​​
-            <intent-filter android:priority="10">
+            <intent-filter android:priority="10" >
 ​​​​​​​​​​​​​​​​
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
 ​​​​​​​​​​​​
             </intent-filter>
 ​​​​​​​​
         </receiver>
+
+        <service android:name=".GCMIntentService" />
     </application>
 
 </manifest>

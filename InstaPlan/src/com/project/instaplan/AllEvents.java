@@ -72,7 +72,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 		Log.i(logTag, "List item Clicked" + position);
 		ClassEvent clicked_event = ClassUniverse.universeListOfAllEvents
 				.get(position);
-		Intent sendToChatRoom = new Intent("com.project.instaplan2.Chatroom_ok");
+		Intent sendToChatRoom = new Intent("com.project.instaplan.Chatroom_ok");
 		Log.i(logTag, "Putting Title Extra: " + clicked_event.title);
 		sendToChatRoom.putExtra("Title", clicked_event.title);
 		sendToChatRoom.putExtra("hostPhoneNumber", clicked_event.host.phoneNumber);
@@ -86,7 +86,7 @@ public class AllEvents extends Activity implements View.OnClickListener,
 			// Enter code for this button.
 			Log.i(logTag, "Create New Button was pressed");
 			Intent sendToCreateEvent = new Intent(
-					"com.project.instaplan2.CreateEvent");
+					"com.project.instaplan.CreateEvent");
 			startActivity(sendToCreateEvent);
 			break;
 

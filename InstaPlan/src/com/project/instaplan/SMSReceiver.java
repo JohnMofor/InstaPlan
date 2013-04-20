@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//import com.project.instaplan2.Chatroom.SpreadPost; //We should do this sometime... for all reg tasks
+//import com.project.instaplan.Chatroom.SpreadPost; //We should do this sometime... for all reg tasks
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -161,7 +161,7 @@ public class SMSReceiver extends BroadcastReceiver {
 			// String body = name + " just posted to " + inEventTitle;
 			// String title = "InstaPlan: Chat Update!";
 			// Intent intent = new Intent();
-			// intent.setAction("com.project.instaplan2.Chatroom");
+			// intent.setAction("com.project.instaplan.Chatroom");
 			// intent.putExtra("Title", inEventTitle);
 			// intent.putExtra("withNotification", "haha");
 			// PendingIntent pi = PendingIntent.getActivity(context, 0, intent,
@@ -179,7 +179,7 @@ public class SMSReceiver extends BroadcastReceiver {
 			String body = "Update from " + name + " to: " + inEventTitle;
 			String title = "InstaPlan: Chatroom Update!";
 			Intent intent = new Intent();
-			intent.setAction("com.project.instaplan2.AllEvents");
+			intent.setAction("com.project.instaplan.AllEvents");
 			intent.putExtra("withNotification", "haha");
 			PendingIntent pi = PendingIntent.getActivity(context, 0, intent, 0);
 			NotificationManager nm = (NotificationManager) context
@@ -199,7 +199,7 @@ public class SMSReceiver extends BroadcastReceiver {
 		String body = "Created by " + name;
 		String title = "InstaPlan: New Event!";
 		Intent intent = new Intent();
-		intent.setAction("com.project.instaplan2.AllEvents");
+		intent.setAction("com.project.instaplan.AllEvents");
 		intent.putExtra("withNotification", "haha");
 		PendingIntent pi = PendingIntent.getActivity(context, 0, intent, 0);
 		NotificationManager nm = (NotificationManager) context

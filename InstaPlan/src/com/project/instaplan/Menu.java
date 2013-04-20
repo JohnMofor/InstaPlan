@@ -29,7 +29,7 @@ public class Menu extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		String item_clicked = classes[position];
 		try {
-			Class<?> ourClass = Class.forName("com.project.instaplan2."
+			Class<?> ourClass = Class.forName("com.project.instaplan."
 					+ item_clicked);
 			Intent ourIntent = new Intent(Menu.this, ourClass);
 			startActivity(ourIntent);

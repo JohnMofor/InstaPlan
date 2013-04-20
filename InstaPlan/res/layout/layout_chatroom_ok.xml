@@ -88,58 +88,59 @@
                     android:orientation="vertical" >
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/Map"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:weightSum="100" >
+<!--                 Google maps -->
+<!--                 <LinearLayout -->
+<!--                     android:id="@+id/Map" -->
+<!--                     android:layout_width="match_parent" -->
+<!--                     android:layout_height="match_parent" -->
+<!--                     android:orientation="vertical" -->
+<!--                     android:weightSum="100" > -->
 
-                    <LinearLayout
-                        android:id="@+id/LinearLayout2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="10"
-                        android:columnCount="1"
-                        android:orientation="horizontal"
-                        android:weightSum="100" >
+<!--                     <LinearLayout -->
+<!--                         android:id="@+id/LinearLayout2" -->
+<!--                         android:layout_width="match_parent" -->
+<!--                         android:layout_height="wrap_content" -->
+<!--                         android:layout_weight="10" -->
+<!--                         android:columnCount="1" -->
+<!--                         android:orientation="horizontal" -->
+<!--                         android:weightSum="100" > -->
 
-                        <EditText
-                            android:id="@+id/etAddress"
-                            android:layout_width="173dp"
-                            android:layout_height="fill_parent"
-                            android:layout_weight="52.17"
-                            android:hint="Where are you?"
-                            android:singleLine="true" />
+<!--                         <EditText -->
+<!--                             android:id="@+id/etAddress" -->
+<!--                             android:layout_width="173dp" -->
+<!--                             android:layout_height="fill_parent" -->
+<!--                             android:layout_weight="52.17" -->
+<!--                             android:hint="Where are you?" -->
+<!--                             android:singleLine="true" /> -->
 
-                        <Button
-                            android:id="@+id/button1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_weight="45.65"
-                            android:text="Go" />
+<!--                         <Button -->
+<!--                             android:id="@+id/button1" -->
+<!--                             android:layout_width="wrap_content" -->
+<!--                             android:layout_height="fill_parent" -->
+<!--                             android:layout_weight="45.65" -->
+<!--                             android:text="Go" /> -->
 
-                        <Button
-                            android:id="@+id/track"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_weight="1"
-                            android:text="Find Me!" />
-                    </LinearLayout>
+<!--                         <Button -->
+<!--                             android:id="@+id/track" -->
+<!--                             android:layout_width="wrap_content" -->
+<!--                             android:layout_height="fill_parent" -->
+<!--                             android:layout_weight="1" -->
+<!--                             android:text="Find Me!" /> -->
+<!--                     </LinearLayout> -->
 
-                    <fragment
-                        android:id="@+id/map"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="80"
-                        class="com.google.android.gms.maps.SupportMapFragment" />
+<!--                     <fragment -->
+<!--                         android:id="@+id/map" -->
+<!--                         android:layout_width="match_parent" -->
+<!--                         android:layout_height="match_parent" -->
+<!--                         android:layout_weight="80" -->
+<!--                         class="com.google.android.gms.maps.SupportMapFragment" /> -->
 
-                    <Button
-                        android:id="@+id/buttonDir"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Get Directions" />
-                </LinearLayout>
+<!--                     <Button -->
+<!--                         android:id="@+id/buttonDir" -->
+<!--                         android:layout_width="fill_parent" -->
+<!--                         android:layout_height="wrap_content" -->
+<!--                         android:text="Get Directions" /> -->
+<!--                 </LinearLayout> -->
 
                 <LinearLayout
                     android:id="@+id/event_guestList_tab"
@@ -162,7 +163,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal" >
 
-                    <com.project.instaplan2.TransparentPanel
+                    <com.project.instaplan.TransparentPanel
                         android:id="@+id/popup_window"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -197,7 +198,7 @@
                             android:padding="6dp"
                             android:text="Menu"
                             android:textColor="#FFFFFF" />
-                    </com.project.instaplan2.TransparentPanel>
+                    </com.project.instaplan.TransparentPanel>
 
                     <Button
                         android:id="@+id/chatroom_ok_slider_popout_button"
