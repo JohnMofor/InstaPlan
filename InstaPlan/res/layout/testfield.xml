@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/Map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="100" >
+
+        <LinearLayout
+            android:id="@+id/LinearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="1"
+            android:layout_weight="10"
+            android:orientation="horizontal"
+            android:weightSum="100" >
+
+            <EditText
+                android:id="@+id/etAddress"
+                android:layout_width="173dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="52.17"
+                android:hint="Where are you?"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="45.65"
+                android:text="Go" />
+
+            <Button
+                android:id="@+id/track"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="Find Me!" />
+        </LinearLayout>
+
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="80"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+
+        <Button
+            android:id="@+id/buttonDir"
+            
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Get Directions" />
+    </LinearLayout>
+
+</LinearLayout>
