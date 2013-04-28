@@ -49,14 +49,13 @@ public class PhoneRegistration extends Activity implements View.OnClickListener 
 	}
 
 	private void reloadPreviousValues() {
-		if (ClassUniverse.regId.equals("")) {
+		if (!GCMRegistrar.isRegisteredOnServer(getApplicationContext())) {
 			phoneRegistration_register_button.setText("Register device");
 		} else {
 			phoneRegistration_register_button.setText("Unregister device");
-		}
-		if(!ClassUniverse.mPhoneNumber.equals("")){
-			phoneRegistration_phoneNumber_editText.setText(ClassUniverse.mPhoneNumber);
-		}
+		}		
+		phoneRegistration_phoneNumber_editText.setText(ClassUniverse.mPhoneNumber);
+		phoneRegistration_phoneNumber_editText.setEnabled(false);
 		if(!ClassUniverse.mEmail.equals("")){
 			phoneRegistration_userEmail_editText.setText(ClassUniverse.mEmail);
 		}
@@ -190,13 +189,13 @@ public class PhoneRegistration extends Activity implements View.OnClickListener 
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			if (!ClassUniverse.GcmRegError.equals("")) {
-				mProgressDialog.dismiss();
-				showMessage(ClassUniverse.GcmRegError);
-			} else {
+			mProgressDialog.dismiss();
+			if (GCMRegistrar.isRegisteredOnServer(getApplicationContext())) {
 				phoneRegistration_register_button.setText("Unregister Device");
 				showMessage("Registration Success!");				
 				finish();
+			} else {
+				showMessage(ClassUniverse.GcmRegError);
 			}
 		}
 

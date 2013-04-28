@@ -3,6 +3,8 @@ package com.project.instaplan;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.google.android.gcm.GCMBaseIntentService;
+import com.google.android.gcm.GCMRegistrar;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -54,7 +56,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	boolean isnew = false;
 	ClassEvent event;
 
-	public static String API_URL = "http://mj-server.mit.edu/gcm/v1/device/";
+	public static String API_URL = "http://instaplan.mit.edu/gcm/v1/device/";
 
 	public GCMIntentService() {
 		super(GCM_SENDER);
@@ -204,8 +206,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 		client.addPostParam(new BasicNameValuePair("reg_id", registrationId));
 		Log.i(LOG_TAG, "Starting to execute request...");
 		if (client.execute()) {
+			GCMRegistrar.setRegisteredOnServer(getApplicationContext(), true);
 			registerPhone();
-			;
 		}
 	}
 
@@ -216,7 +218,9 @@ public class GCMIntentService extends GCMBaseIntentService {
 		RestClient client = new RestClient(url);
 
 		client.addPostParam(new BasicNameValuePair("dev_id", deviceID));
-		client.execute();
+		if (client.execute()){
+			GCMRegistrar.setRegisteredOnServer(getApplicationContext(), false);
+		}
 
 	}
 
@@ -289,6 +293,9 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 				Log.i(LOG_TAG, "Response code: " + responseCode);
 				Log.i(LOG_TAG, "Response message: " + responseMessage);
+				if (!(responseCode == HttpStatus.SC_OK)){
+					ClassUniverse.GcmRegError="Could not contact GCM server";
+				}
 				return responseCode == HttpStatus.SC_OK;
 
 			} catch (ClientProtocolException e) {
@@ -449,7 +456,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			String body = "Update from " + name + " to: " + inEventTitle;
 			String title = "InstaPlan: Chatroom Update!";
 			Intent intent = new Intent();
-			intent.setAction("com.project.instaplan2.AllEvents");
+			intent.setAction("com.project.instaplan.AllEvents");
 			intent.putExtra("withNotification", "haha");
 			PendingIntent pi = PendingIntent.getActivity(context, 0, intent, 0);
 			NotificationManager nm = (NotificationManager) context
@@ -469,7 +476,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		String body = "Created by " + name;
 		String title = "InstaPlan: New Event!";
 		Intent intent = new Intent();
-		intent.setAction("com.project.instaplan2.AllEvents");
+		intent.setAction("com.project.instaplan.AllEvents");
 		intent.putExtra("withNotification", "haha");
 		PendingIntent pi = PendingIntent.getActivity(context, 0, intent, 0);
 		NotificationManager nm = (NotificationManager) context

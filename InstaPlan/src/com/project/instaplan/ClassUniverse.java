@@ -16,6 +16,8 @@ public class ClassUniverse {
 	public static String mPhoneNumber = "";
 	public static String mEmail = "";
 	public static int numberOfAllMyEventsEverCreated = 1;
+	public static boolean phoneUnlocked= false;
+	public static String registrationTag="Welcome to Instaplan!";
 	
 
 	static ArrayList<ClassEvent> universeListOfAllEvents = new ArrayList<ClassEvent>();

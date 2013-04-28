@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//import com.project.instaplan.Chatroom.SpreadPost; //We should do this sometime... for all reg tasks
+//import com.project.instaplan2.Chatroom.SpreadPost; //We should do this sometime... for all reg tasks
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -59,11 +59,12 @@ public class SMSReceiver extends BroadcastReceiver {
 					.getOriginatingAddress().toString();
 			Log.i(logTag, "Phone number of sender: " + phoneNumber
 					+ ", now looking for name matching that.");
-			
-			// The phoneNumber could be +1 (xxx) xxx-yyyy... remove all the non digits.
-			phoneNumber = phoneNumber.replaceAll("\\D+","");
-			if(phoneNumber.length()==10){
-				phoneNumber="1"+phoneNumber;
+
+			// The phoneNumber could be +1 (xxx) xxx-yyyy... remove all the non
+			// digits.
+			phoneNumber = phoneNumber.replaceAll("\\D+", "");
+			if (phoneNumber.length() == 10) {
+				phoneNumber = "1" + phoneNumber;
 			}
 
 			// Unifying all SMS Parts into 1.
@@ -73,6 +74,7 @@ public class SMSReceiver extends BroadcastReceiver {
 						.createFromPdu((byte[]) rawSms[i]);
 				smsBody += receivedMessage[i].getMessageBody().toString();
 			}
+			
 			Log.i(logTag, "Unified sms: " + smsBody);
 
 			// Getting the sms type and excuting it based on it's type.
@@ -112,6 +114,8 @@ public class SMSReceiver extends BroadcastReceiver {
 				createEventFromSms(smsBody, creator, context);
 				notifyUser(creator.name, context);
 				break;
+			case 3:
+				ClassUniverse.phoneUnlocked=true;
 			}
 
 		}
@@ -161,7 +165,7 @@ public class SMSReceiver extends BroadcastReceiver {
 			// String body = name + " just posted to " + inEventTitle;
 			// String title = "InstaPlan: Chat Update!";
 			// Intent intent = new Intent();
-			// intent.setAction("com.project.instaplan.Chatroom");
+			// intent.setAction("com.project.instaplan2.Chatroom");
 			// intent.putExtra("Title", inEventTitle);
 			// intent.putExtra("withNotification", "haha");
 			// PendingIntent pi = PendingIntent.getActivity(context, 0, intent,
@@ -315,6 +319,10 @@ public class SMSReceiver extends BroadcastReceiver {
 					"This could be an Appless-sent sms Event update, we will check that, returning 1");
 			return 1;
 		}
+		if (smsBody.contains(ClassUniverse.registrationTag)){
+			abortBroadcast();
+			return 3;
+		}
 		return 0;
 	}
 
@@ -334,7 +342,7 @@ public class SMSReceiver extends BroadcastReceiver {
 		Matcher matcher = pattern.matcher(smsBody);
 		if (matcher.find()) {
 			int index = Integer.parseInt(matcher.group(1));
-			index = (index < 0 ? -index:index);
+			index = (index < 0 ? -index : index);
 
 			Log.i(logTag, "A valid SMS Tag was found: " + matcher.group(1));
 			Log.i(logTag, "Setting person to APPLESS mode");
@@ -358,8 +366,8 @@ public class SMSReceiver extends BroadcastReceiver {
 			matcher = pattern.matcher(smsBody);
 			if (matcher.find()) {
 				int hashReceived = Integer.parseInt(matcher.group(1));
-				hashReceived = (hashReceived < 0 ? -hashReceived:hashReceived);
-				
+				hashReceived = (hashReceived < 0 ? -hashReceived : hashReceived);
+
 				person.hasApp = true;
 				person.hasGCM = true; // not really... lol
 
@@ -431,8 +439,8 @@ public class SMSReceiver extends BroadcastReceiver {
 				+ event.eventHash + "%-/";
 
 		// 3. Person has gcm.
-		String post_content_gcm = raw_sms_without_tags + " /-%" + event.eventHash
-				+ "%-/";
+		String post_content_gcm = raw_sms_without_tags + " /-%"
+				+ event.eventHash + "%-/";
 
 		if (ClassUniverse.GCMEnabled) {
 			Log.i(logTag, "Assuming Session has wifi and try to send GCM");
